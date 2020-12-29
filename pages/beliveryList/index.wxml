@@ -1,0 +1,22 @@
+<!--pages/buildList/index.wxml-->
+<view class="build_box">
+  <wxs src="../../filter/status.wxs" module="status"></wxs>
+  <view class="house_item" wx:for="{{beerList}}" wx:key="index" data-index="{{index}}">
+    <view class="house_box">
+      <view class="item">啤酒类型：{{item.beerTypeName?item.beerTypeName:'通用'}}</view>
+      <view class="item">配送啤酒数量：{{item.beerCount}}</view>
+      <view class="item">配送店铺：{{item.deliveryShopName}}</view>
+      <view class="item">配送员：{{item.deliveryName?item.deliveryName:''}}</view>
+      <view class="item">收货店铺：{{item.takeShopName}}</view>
+      <view class="item">收货人：{{item.takeName?item.takeName:''}}</view>
+      <view class="status">状态：{{status.deliveryStatus(item.deliveryStatus)}}</view>
+    </view>
+    <view class="house_edit">
+      <button size="mini" type="primary" data-item="{{item}}" catchtap="updateDerviry">修改</button>
+      <!-- <button size="mini" type="warn" data-id="{{item.deliveryIdKey}}" catchtap="deleteDerviry">删除</button> -->
+      <button size="mini" type="default" data-id="{{item.deliveryIdKey}}" catchtap="cancelDerviry">取消配送</button>
+    </view>
+  </view>
+</view>
+
+<view class="fixed_bottom_btn" bindtap="add" bindtap="add">添加配送</view>

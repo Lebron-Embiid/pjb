@@ -1,0 +1,31 @@
+/* pages/qinqinhehe/companyApprove/index.wxss */
+.company_item{
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
+  color: #333333;
+  font-size: 24rpx;
+}
+.company_left{
+  width: 70%;
+}
+.company_left .img{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.company_left .img image{
+  display: block;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+.company_right{
+  width: 30%;
+  text-align: right;
+}

@@ -1,0 +1,9 @@
+<!--components/promotionList.wxml-->
+<view class="promotion_list_box">
+  <view class="promotion_item" wx:for="{{list}}" wx:key="index">
+      <view class="item_box" catch:tap="clickItem" data-index="{{index}}" data-item="{{item}}">
+        <view class="img"><image src="{{item.icon}}" mode="widthFix"></image></view>
+        <text>{{item.title}}</text>
+      </view>
+  </view>
+</view>

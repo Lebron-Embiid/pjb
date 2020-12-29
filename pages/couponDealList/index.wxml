@@ -1,0 +1,9 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="company_box" wx:if="{{dealList.length!=0}}">
+  <view class="seller_coupon_item" wx:for="{{dealList}}" wx:key="index">
+    <view class="seller_top">促销券名称：<text>{{item.couponName}}</text></view>
+    <view class="seller_top">促销券售价：<text>{{item.couponPrice}}</text></view>
+    <view class="seller_top">交易状态：<text>{{item.dealStatus==0?'推荐成功':'出售成功'}}</text></view>
+  </view>
+</view>
+<view class="no_data_txt" wx:else>暂无数据</view>

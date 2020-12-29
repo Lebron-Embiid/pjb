@@ -1,0 +1,10 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="form_box">
+  <view class="form_item">
+    <text class="form_txt">名称</text>
+    <view class="form_content"><input placeholder="请输入名称" value="{{name}}" bindinput="getName"></input></view>
+  </view>
+  <view class="btn_box">
+    <button type="primary" bindtap="addSubmit">提交</button>
+  </view>
+</view>

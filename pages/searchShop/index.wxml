@@ -1,0 +1,21 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="company_box" wx:if="{{company_list.length!=0}}">
+  <wxs src="../../filter/status.wxs" module="status"></wxs>
+  <view class="company_item" wx:for="{{company_list}}" wx:if="{{item.status==1}}" wx:key="index">
+    <view class="company_left">
+      <view>企业名称: {{item.shopName}}</view>
+      <view>老板名称: {{item.bossName}}</view>
+    </view>
+    <!-- wx:if="{{item.status==0}}" -->
+    <view class="company_right" wx:if="{{identity==8}}">
+      <!-- <picker mode="selector" range="{{roleList}}" data-item="{{item}}" bindchange="bindRoleChange">
+        <button size="mini" type="primary">申请</button>
+      </picker> -->
+      <button size="mini" type="primary" data-item="{{item}}" bindtap="applyShopRole">申请</button>
+    </view>
+    <!-- <view class="company_right" wx:else>
+      <text>{{status.filterStatus1(item.status)}}</text>
+    </view> -->
+  </view>
+</view>
+<view class="no_data_txt" wx:else>暂无数据</view>

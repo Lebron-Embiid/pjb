@@ -1,0 +1,76 @@
+<!--pages/applyShop/index.wxml-->
+<view class="form_box" wx:if="{{is_pass == 0}}">
+  <form bindsubmit="submitForm">
+    <!-- <view class="title">{{title}}</view> -->
+    <!-- <view class="form_item">
+      <view class="form_txt">店铺类型</view>
+      <view class="form_content noborder">
+        <radio-group bindchange="radioChange">
+          <label class="weui-cell weui-check__label" wx:for="{{items}}" wx:key="{{item.value}}">
+            <view class="weui-cell__hd">
+              <radio value="{{item.value}}" checked="{{item.checked}}"/>
+            </view>
+            <view class="weui-cell__bd">{{item.name}}</view>
+          </label>
+        </radio-group>
+      </view>
+    </view> -->
+    <view class="form_item">
+      <view class="form_txt">店铺名称 <text>*</text></view>
+      <view class="form_content"><input placeholder="请输入店铺名称" value="{{company_name}}" data-key="company_name" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">老板名称 <text>*</text></view>
+      <view class="form_content"><input placeholder="请输入老板名称" value="{{person_name}}" data-key="person_name" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">联系方式</view>
+      <view class="form_content"><input placeholder="请输入联系方式" disabled type="number" maxlength="11" value="{{person_phone}}" data-key="person_phone" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">邮箱</view>
+      <view class="form_content"><input placeholder="请输入邮箱" value="{{person_email}}" data-key="person_email" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">身份证号</view>
+      <view class="form_content"><input placeholder="请输入身份证号" value="{{person_idcard}}" data-key="person_idcard" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">地址</view>
+      <view class="form_content"><input placeholder="请输入地址" value="{{address}}" data-key="address" bindinput="getInputVal"></input></view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">商业执照	</view>
+      <view class="form_content noborder">
+        <view class="add_box" data-upname="licenseImg" data-is_upname="is_licenseImg" bindtap="commonUpload">
+          <text wx:if="{{is_licenseImg == 0}}">+</text>
+          <image wx:else src="{{licenseImg}}" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+    <view class="form_item">
+      <view class="form_txt">店铺图片	</view>
+      <view class="form_content noborder">
+        <view class="add_box" data-upname="shopImg" data-is_upname="is_shopImg" bindtap="commonUpload">
+          <text wx:if="{{is_shopImg == 0}}">+</text>
+          <image wx:else src="{{shopImg}}" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+    <!-- <view class="form_item">
+      <text class="form_txt">收货地址</text>
+      <view class="form_content noborder">
+        <picker mode="region" bindchange="bindRegionChange" value="{{region}}">
+          <view class="picker">
+            当前选择：{{region[0]}} - {{region[1]}} - {{region[2]}}
+          </view>
+        </picker>
+      </view>
+    </view> -->
+    <button form-type="submit" type="primary" style="margin-top: 80rpx;">提交</button>
+  </form>
+</view>
+
+<view class="till" wx:else>
+  已提交成功，等待审批。
+</view>

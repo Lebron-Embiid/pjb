@@ -1,0 +1,18 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="company_box" wx:if="{{shop_list.length!=0}}">
+  <wxs src="../../filter/status.wxs" module="status"></wxs>
+  <view class="company_item" wx:for="{{shop_list}}" wx:key="index">
+    <view class="company_left">
+      <view>店铺名称: {{item.shopName}}</view>
+      <view>老板名称: {{item.bossName}}</view>
+      <view>手机号: {{item.phone}}</view>
+      <view>类型：{{item.type==0?'厂家':'餐饮'}}</view>
+      <view>状态: {{status.filterStatus(item.status)}}</view>
+    </view>
+    <view class="company_right" wx:if="{{item.status!=1}}">
+      <button size="mini" type="primary" data-item="{{item}}" bindtap="agreeShop">同意</button>
+      <button size="mini" type="warn" data-item="{{item}}" bindtap="rejectShop">拒绝</button>
+    </view>
+  </view>
+</view>
+<view class="no_data_txt" wx:else>暂无数据</view>

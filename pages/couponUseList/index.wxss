@@ -1,0 +1,22 @@
+/* pages/couponUseList/index.wxss */
+.nav_content{
+  padding: 20rpx 5%;
+  box-sizing: border-box;
+}
+.seller_coupon_item{
+  padding: 10rpx;
+  box-sizing: border-box;
+  border-bottom: 2rpx solid #cccccc;
+}
+.seller_top,.seller_bottom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.seller_top{
+  margin-bottom: 10rpx;
+}
+.seller_top text,.seller_bottom text{
+  color: #999999;
+  font-size: 28rpx;
+}

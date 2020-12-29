@@ -1,0 +1,5 @@
+<van-nav-bar title="只有啤酒" left-arrow="{{true}}" left-text="获得该促销券" custom-class="navBar" fixed border="{{false}}" title-class="title" bind:click-left="onClickLeft">
+</van-nav-bar>
+<video src="{{url}}" autoplay loop custom-cache="{{true}}" bindended="nextVideo" binderror="nextVideo" vslide-gesture>
+</video>
+<button open-type='getUserInfo' lang="zh_CN" bindgetuserinfo="onGotUserInfo"></button>

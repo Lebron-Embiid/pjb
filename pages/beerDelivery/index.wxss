@@ -1,0 +1,36 @@
+/* pages/qinqinhehe/companyApprove/index.wxss */
+.form_btn_box{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.form_btn_box button{
+  margin: 0;
+}
+.form_box{
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+.form_box .form_item{
+  margin-bottom: 20rpx;
+}
+.form_box .form_item .form_txt{
+  color: #999999;
+  font-size: 24rpx;
+}
+.form_box .form_item .form_content{
+  margin-top: 10rpx;
+  border: 1px solid #cccccc;
+  padding: 10rpx;
+  box-sizing: border-box;
+  border-radius: 10rpx;
+}
+.form_box .form_item .form_content.noborder{
+  border: 0;
+}
+.form_box .form_item .form_content input,.video_item input,.shop_txt{
+  font-size: 26rpx;
+}
+.btn_box{
+  margin-top: 50rpx;
+}

@@ -1,0 +1,37 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="form_box">
+  <view class="form_item">
+    <view class="form_txt form_btn_box">啤酒类型</view>
+    <view class="form_content">
+      <picker mode="selector" value="{{beer_index}}" range="{{beer_type}}" range-key="name" bindchange="bindSelectorChange">
+        <view class="picker">
+          {{beer_type[beer_index].name}}
+        </view>
+      </picker>
+    </view>
+  </view>
+  <view class="form_item">
+    <text class="form_txt">配送的啤酒数量	</text>
+    <view class="form_content"><input placeholder="请输入配送的啤酒数量	" value="{{number}}" bindinput="getNumber"></input></view>
+  </view>
+  <view class="form_item">
+    <view class="form_txt">选择店铺</view>
+    <view class="form_content">
+      <picker mode="selector" value="{{shop_index}}" range="{{shop_list}}" range-key="shopName" bindchange="bindShopChange">
+        <view class="picker">
+          {{shop_list[shop_index].shopName}}
+        </view>
+      </picker>
+    </view>
+  </view>
+  <view class="form_item" wx:if="{{shopInfo.nickname}}">
+    <text class="form_txt">店铺信息	</text>
+    <view class="form_content noborder">
+      <view class="shop_txt">老板昵称：{{shopInfo.nickname?shopInfo.nickname:''}}</view>
+      <view class="shop_txt">手机号：{{shopInfo.phone?shopInfo.phone:''}}</view>
+    </view>
+  </view>
+  <view class="btn_box">
+    <button type="primary" bindtap="addSubmit">提交</button>
+  </view>
+</view>

@@ -1,0 +1,16 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="company_box" wx:if="{{role_list.length!=0}}">
+  <wxs src="../../filter/status.wxs" module="status"></wxs>
+  <view class="company_item" wx:for="{{role_list}}" wx:key="index" wx:if="{{item.roleStatus!=2}}">
+    <view class="company_left">
+      <view class="img"><image src="{{item.headUrl}}" mode="widthFix"></image> <text>{{item.nickname}}</text></view>
+      <view>申请角色: {{status.filterRole(item.roleType)}}</view>
+      <view>状态: {{status.filterStatus1(item.roleStatus)}}</view>
+    </view>
+    <view class="company_right" wx:if="{{item.roleStatus!=1}}">
+      <button size="mini" type="primary" data-item="{{item}}" catchtap="agreeBtn">同意</button>
+      <button size="mini" type="warn" data-item="{{item}}" catchtap="rejectBtn">拒绝</button>
+    </view>
+  </view>
+</view>
+<view class="no_data_txt" wx:else>暂无数据</view>

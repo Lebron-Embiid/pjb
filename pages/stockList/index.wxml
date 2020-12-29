@@ -1,0 +1,5 @@
+<!--pages/qinqinhehe/companyApprove/index.wxml-->
+<view class="company_box" wx:if="{{list.length==0}}">
+  
+</view>
+<view class="no_data_txt" wx:else>暂无数据</view>
