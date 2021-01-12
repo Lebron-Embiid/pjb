@@ -6,13 +6,13 @@
   <view class="table_box" wx:if="{{myBuyCouponList.length!=0}}">
     <view class="table_item">
       <view class="table_th">促销券名称</view>
-      <view class="table_th">使用次数</view>
+      <view class="table_th" wx:if="{{nav_active==0}}">剩余次数</view>
       <view class="table_th">日期</view>
       <view class="table_th">操作</view>
     </view>
     <view class="table_item" wx:for="{{myBuyCouponList}}" wx:key="index">
       <view class="table_td">{{item.couponName}}</view>
-      <view class="table_td">{{item.count}}</view>
+      <view class="table_td" wx:if="{{item.count!=0}}">{{item.count}}</view>
       <view class="table_td">{{item.sellDate}}</view>
       <view class="table_td"><button type="default" size="mini" data-id="{{item.couponId}}" bindtap="toDetail">详情</button></view>
     </view>

@@ -35,16 +35,20 @@ Page({
   getCouponList(){
     queryUserCouponConsume({
       pageNum: this.data.page,
-      pageSize: 20
+      pageSize: 20,
+      consumerId: wx.getStorageSync('userInfo').unionId
     }).then((res)=>{
       if(res.code){
+        for(let i in res.data){
+          res.data[i].consumeTime = res.data[i].consumeTime.split(' ')[0]
+        }
         if(this.data.page == 1){
           this.setData({
-            couponList: res.data.records
+            couponList: res.data
           })
         }else{
           this.setData({
-            couponList: this.data.couponList.concat(res.data.records)
+            couponList: this.data.couponList.concat(res.data)
           })
         }
       }

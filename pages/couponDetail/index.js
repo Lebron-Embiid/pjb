@@ -56,8 +56,8 @@ Page({
           this.showBuyPhoto();
         },2000)
       })
-    }else{
-      console.log('浏览原始图：'+wx.getStorageSync('look_old'));
+    }else if(options.type == 'look'){
+      // 展示浏览促销券
       previewAgentCouponImg({
         couponBrowseId: options.id
       }).then((res)=>{
@@ -71,6 +71,24 @@ Page({
         wx.hideLoading();
         timer = setInterval(()=>{
           this.showLookPhoto();
+        },2000)
+      })
+    }else{
+      // 展示代理促销券
+      console.log('浏览原始图：'+wx.getStorageSync('look_old'));
+      querypreviewAgentCouponImg({
+        couponAgentId: options.id
+      }).then((res)=>{
+        if(res.code == 200){
+          this.setData({
+            src: res.data.imageNum
+          })
+          wx.hideLoading();
+        }
+      }).catch((err)=>{
+        wx.hideLoading();
+        timer = setInterval(()=>{
+          this.showAgentPhoto();
         },2000)
       })
     }
@@ -122,6 +140,18 @@ Page({
       clearInterval(timer);
       if(res.code == 200){
         // console.log('已购的图片：'+res.data);
+        this.setData({
+          src: res.data.imageNum
+        })
+      }
+    })
+  },
+  showAgentPhoto(){
+    querypreviewAgentCouponImg({
+      couponAgentId: this.data.id
+    }).then((res)=>{
+      clearInterval(timer);
+      if(res.code == 200){
         this.setData({
           src: res.data.imageNum
         })
@@ -187,14 +217,14 @@ Page({
   },
   downloadImg(){
     var that = this;
-    console.log('下载的图片'+that.data.save_src)
+    console.log('下载的图片'+that.data.src)
     wx.showModal({
       title: '提示',
       content: '确定下载促销券图片？',
       success: function(res) {
         if(res.confirm){
           wx.downloadFile({
-            url: that.data.save_src,
+            url: that.data.src,
             success: (ress) => {
               if (ress.statusCode === 200) {
                 console.log(ress.tempFilePath);
@@ -211,16 +241,20 @@ Page({
                 })
               }
             },
-            fail() {
-              wx.openSetting({
-                success(settingdata) {
-                  if (settingdata.authSetting['scope.writePhotosAlbum']) {
-                    console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
-                  } else {
-                    console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+            fail(err) {
+              console.log(JSON.stringify(err))
+              if(err.errMsg === "saveImageToPhotosAlbum:fail:auth denied") {
+                wx.openSetting({
+                  success(settingdata) {
+                    console.log(settingdata)
+                    if (settingdata.authSetting["scope.writePhotosAlbum"]) {
+                      console.log("获取权限成功，再次点击图片保存到相册")
+                    } else {
+                      console.log("获取权限失败")
+                    }
                   }
-                }
-              })
+                })
+              }
               publicFun.getToast('下载失败');
             }
           })

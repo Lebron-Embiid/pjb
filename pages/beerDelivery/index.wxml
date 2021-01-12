@@ -12,7 +12,7 @@
   </view>
   <view class="form_item">
     <text class="form_txt">配送的啤酒数量	</text>
-    <view class="form_content"><input placeholder="请输入配送的啤酒数量	" value="{{number}}" bindinput="getNumber"></input></view>
+    <view class="form_content"><input placeholder="请输入配送的啤酒数量" type="number" value="{{number}}" bindinput="getNumber"></input></view>
   </view>
   <view class="form_item">
     <view class="form_txt">选择店铺</view>
@@ -24,11 +24,19 @@
       </picker>
     </view>
   </view>
-  <view class="form_item" wx:if="{{shopInfo.nickname}}">
-    <text class="form_txt">店铺信息	</text>
+  <!-- <view class="form_item">
+    <text class="form_txt">配送信息	</text>
     <view class="form_content noborder">
-      <view class="shop_txt">老板昵称：{{shopInfo.nickname?shopInfo.nickname:''}}</view>
+      <view class="shop_txt">配送人：{{userInfo.nickname?userInfo.nickname:userInfo.bossName}}</view>
+      <view class="shop_txt">手机号：{{userInfo.phone?userInfo.phone:''}}</view>
+    </view>
+  </view> -->
+  <view class="form_item" wx:if="{{shopInfo.phone}}">
+    <text class="form_txt">收货信息	</text>
+    <view class="form_content noborder">
+      <view class="shop_txt">收货人：{{shopInfo.nickname?shopInfo.nickname:shopInfo.bossName}}</view>
       <view class="shop_txt">手机号：{{shopInfo.phone?shopInfo.phone:''}}</view>
+      <view class="shop_txt" wx:if="{{shopInfo.address}}">地址：{{shopInfo.address?shopInfo.address:''}}</view>
     </view>
   </view>
   <view class="btn_box">

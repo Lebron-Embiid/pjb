@@ -1,0 +1,9 @@
+<!--pages/mapSearch/index.wxml-->
+<view class="section">
+  <input bindinput="bindInput" placeholder="请输入地址" focus="true" value='{{AddressName}}'/>
+  <!-- <button class='btn-Wc' size='mini' type='primary' bindtap='SetSession'>确定</button> -->
+  <!-- <view class='View_Bk'></view> -->
+</view>
+<view bindtap="bindSearch" data-area="{{item.name}}" data-keywords="{{item.name}}" data-location="{{item.location}}" class="text_box" wx:for="{{tips}}" wx:key="index">
+  {{item.name}} <text wx:if="{{item.district.length!=0}}">（{{item.district}}）</text>
+</view>

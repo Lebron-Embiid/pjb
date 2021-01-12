@@ -71,13 +71,13 @@ Page({
     }
 
     this.setData({
-      type: options.type,
+      type: wx.getStorageSync('userInfo').type,
       id: options.id,
       date: options.date,
       today: today,
       lastArr: last7
     })
-    console.log(this.data.type)
+    console.log('---身份type---'+this.data.type)
 
     this.echartsComponnet = this.selectComponent('#mychart');
     this.getData(); //获取数据

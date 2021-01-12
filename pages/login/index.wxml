@@ -1,4 +1,4 @@
-<image class="logo" size="mini" src="/assets/logo.jpg"></image>
+<image class="logo" size="mini" src="/assets/pjb_logo.png"></image>
 <button class="login" wx:if="{{is_auth}}" open-type="getPhoneNumber" bind:getphonenumber="getUserInfoFun" type="primary" lang='zh_CN'>微信用户授权手机号</button>
 <button class="login" wx:else open-type="getUserInfo" bind:getuserinfo="userInfo" type="primary">微信用户授权登录</button>
 <view class="protocol">

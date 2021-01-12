@@ -5,7 +5,13 @@ import {
   seller_coupon_profit_list,
   coupon_sell_trend_chart,
   coupon_sell_trend_chart_month,
-  queryAgentCouponDealRecordStatisticsOutline
+  queryAgentCouponDealRecordStatisticsOutlineIsDay,
+  queryAgentCouponDealRecordStatisticsOutlineIsHour,
+  queryAgentCouponDealRecordStatisticsOutlineIsMonth,
+  querySellCouponDealRecordStatisticsOutlineIsDay,
+  querySellCouponDealRecordStatisticsOutlineIsHour,
+  querySellCouponDealRecordStatisticsOutlineIsMonth,
+  queryAgentInviteRatioList
 } from '../../api/user.js'
 
 var Chart = null;
@@ -25,7 +31,7 @@ Page({
     ec: {
       lazyLoad: true // 延迟加载
     },
-    selectDayMonth: true,
+    selectDayMonth: 1,//0:小时 1:天 2:月
     lastArr: [],
     lastMonth: []
   },
@@ -40,9 +46,6 @@ Page({
     var D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
     var today = Y + '-' + M + '-' + D;
     
-    this.echartsComponnet = this.selectComponent('#mychart');
-    this.getData(today); //获取数据
-    
     let last7 = [];
     for(let i=0;i<=9;i++){
       this.getLastSevenDay(i);
@@ -51,12 +54,20 @@ Page({
     }
 
     this.setData({
-      type: options.type,
+      type: wx.getStorageSync('userInfo').type,
       date: today,
       lastArr: last7
     })
+    
+    this.echartsComponnet = this.selectComponent('#mychart');
+    this.getData(today); //获取数据
 
-    this.getAgentProfitList();
+    console.log("---当前身份---"+this.data.type)
+    // if(this.data.type == 0 || this.data.type == 1 || this.data.type == 4){
+    //   this.getAgentProfitList();
+    // }else{
+    //   this.getSellerProfitList();
+    // }
   },
   getLastSevenDay(n){
     var timestamp = Date.parse(new Date());
@@ -69,7 +80,7 @@ Page({
     //获取当日日期
     var D = tdate.getDate() < 10 ? '0' + tdate.getDate() : tdate.getDate();
     //減7天的时间戳：
-    var before_timetamp = timestamp - 24 * 60 * 60 * n;
+    var before_timetamp = timestamp - 24 * 60 * 60 * n;// * (n+1)
     //減7天的时间：
     var n_to = before_timetamp * 1000;
     var before_timetamp = new Date(n_to);
@@ -92,103 +103,282 @@ Page({
 
   },
   getData(today){
-    if(this.data.selectDayMonth == true){
-      queryAgentCouponDealRecordStatisticsOutline({
-        date: today
-      }).then((res)=>{
-        if(res.code == 200){
-          for(let i in res.data){
-            for(let j in res.data[i].data){
-              if(res.data[i].data[j] != 0){
-                this.data.dataList.push({
-                  name: res.data[i].couponName,
-                  type: 'line',
-                  smooth: true,
-                  data: res.data[i].data
-                })
+    if(this.data.type == 0 || this.data.type == 1 || this.data.type == 4){
+      // 代理人报表
+      if(this.data.selectDayMonth == 1){
+        // 天
+        let data = {
+          // startDate: today,
+          // endDate: today
+        }
+        if(this.data.type == 4){
+          data.agentId = wx.getStorageSync('userInfo').unionId
+        }
+        if(this.data.type == 0 || this.data.type == 1){
+          data.businessId = wx.getStorageSync('business_id')
+        }
+        queryAgentCouponDealRecordStatisticsOutlineIsDay(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [[],[]];	
+            for(let i in res.data){
+              if(res.data[i].sealSuccessNumber == null){
+                res.data[i].sealSuccessNumber = 0;
               }
+              if(res.data[i].spreadNumber == null){
+                res.data[i].spreadNumber = 0;
+              }
+              //交易成功数量
+              x_data[0].push(res.data[i].sealSuccessNumber)
+              //传播数量
+              x_data[1].push(res.data[i].spreadNumber)
             }
-          }
-          this.setData({
-            dataList: this.data.dataList
-          })
-          console.log(this.data.dataList)
-          this.init_echarts();
-        }
-      })
-    }else{
-      coupon_sell_trend_chart_month().then((res)=>{
-        if(res.code == 200){
-          this.data.dataList.push({
-            name: '',
-            type: 'line',
-            smooth: true,
-            data: res.data.data
-          })
-          
-          let date = res.data.date;
-          for(let j in date){
-            this.data.lastMonth.push(date[j].split('-')[1]);
-          }
+            for(let i=0;i<2;i++){
+              this.data.dataList.push({
+                name: i==0?'交易成功数量':'传播数量',
+                type: 'line',
+                smooth: true,
+                data: x_data[i]
+              })
+            }
+            
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.push(date[j].date.split('-')[2]);
+            }
 
-          this.setData({
-            dataList: this.data.dataList,
-            lastMonth: this.data.lastMonth
-          })
-          console.log(this.data.lastMonth);
-          console.log(this.data.dataList)
-          this.init_echarts();
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }else if(this.data.selectDayMonth == 2){
+        // 月
+        let data = {
+          // startDate: today,
+          // endDate: today
         }
-      })
+        if(this.data.type == 4){
+          data.agentId = wx.getStorageSync('userInfo').unionId
+        }
+        if(this.data.type == 0 || this.data.type == 1){
+          data.businessId = wx.getStorageSync('business_id')
+        }
+        queryAgentCouponDealRecordStatisticsOutlineIsMonth(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [[],[]];	
+            for(let i in res.data){
+              if(res.data[i].sealSuccessNumber == null){
+                res.data[i].sealSuccessNumber = 0;
+              }
+              if(res.data[i].spreadNumber == null){
+                res.data[i].spreadNumber = 0;
+              }
+              //交易成功数量
+              x_data[0].push(res.data[i].sealSuccessNumber)
+              //传播数量
+              x_data[1].push(res.data[i].spreadNumber)
+            }
+            for(let i=0;i<2;i++){
+              this.data.dataList.push({
+                name: i==0?'交易成功数量':'传播数量',
+                type: 'line',
+                smooth: true,
+                data: x_data[i]
+              })
+            }
+            
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.push(date[j].date);
+            }
+
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+            console.log(this.data.lastMonth);
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }else{
+        // 小时
+        let data = {
+          // startDate: today
+        }
+        if(this.data.type == 4){
+          data.agentId = wx.getStorageSync('userInfo').unionId
+        }
+        if(this.data.type == 0 || this.data.type == 1){
+          data.businessId = wx.getStorageSync('business_id')
+        }
+        queryAgentCouponDealRecordStatisticsOutlineIsHour(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [[],[]];	
+            for(let i in res.data){
+              if(res.data[i].sealSuccessNumber == null){
+                res.data[i].sealSuccessNumber = 0;
+              }
+              if(res.data[i].spreadNumber == null){
+                res.data[i].spreadNumber = 0;
+              }
+              //交易成功数量
+              x_data[0].push(res.data[i].sealSuccessNumber)
+              //传播数量
+              x_data[1].push(res.data[i].spreadNumber)
+            }
+            for(let i=0;i<2;i++){
+              this.data.dataList.push({
+                name: i==0?'交易成功数量':'传播数量',
+                type: 'line',
+                smooth: true,
+                data: x_data[i]
+              })
+            }
+          
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.unshift(date[j].date.split(' ')[1]);
+            }
+
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+            
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }
+    }else{
+      // 销售员报表
+      if(this.data.selectDayMonth == 1){
+        // 天
+        let data = {
+          // startDate: today,
+          // endDate: today
+        }
+        if(this.data.type == 3 || this.data.type == 7){
+          data.sellerId = wx.getStorageSync('userInfo').unionId
+        }
+        querySellCouponDealRecordStatisticsOutlineIsDay(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [];
+            for(let i in res.data){
+              if(res.data[i].sellerNumber == null){
+                res.data[i].sellerNumber = 0;
+              }
+              x_data.push(res.data[i].sellerNumber)
+              // console.log(res.data[i])
+            }
+            // x_data.push(x_data[x_data.length-1]*2)
+            this.data.dataList.push({
+              name: '销售数量',
+              type: 'line',
+              smooth: true,
+              data: x_data
+            })
+
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.push(date[j].date.split('-')[2]);
+            }
+
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }else if(this.data.selectDayMonth == 2){
+        // 月
+        let data = {
+          // startDate: today,
+          // endDate: today
+        }
+        if(this.data.type == 3 || this.data.type == 7){
+          data.sellerId = wx.getStorageSync('userInfo').unionId
+        }
+        querySellCouponDealRecordStatisticsOutlineIsMonth(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [];
+            for(let i in res.data){
+              if(res.data[i].sellerNumber == null){
+                res.data[i].sellerNumber = 0;
+              }
+              x_data.push(res.data[i].sellerNumber)
+              // console.log(res.data[i])
+            }
+            this.data.dataList.push({
+              name: '销售数量',
+              type: 'line',
+              smooth: true,
+              data: x_data
+            })
+            
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.push(date[j].date);
+            }
+
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+            console.log(this.data.lastMonth);
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }else{
+        // 小时
+        let data = {
+          // startDate: today
+        }
+        if(this.data.type == 3 || this.data.type == 7){
+          data.sellerId = wx.getStorageSync('userInfo').unionId
+        }
+        querySellCouponDealRecordStatisticsOutlineIsHour(data).then((res)=>{
+          if(res.code == 200){
+            let x_data = [];
+            for(let i in res.data){
+              if(res.data[i].sellerNumber == null){
+                res.data[i].sellerNumber = 0;
+              }
+              x_data.push(res.data[i].sellerNumber)
+              // console.log(res.data[i])
+            }
+            this.data.dataList.push({
+              name: '销售数量',
+              type: 'line',
+              smooth: true,
+              data: x_data
+            })
+          
+            let date = res.data;
+            for(let j in date){
+              this.data.lastMonth.unshift(date[j].date.split(' ')[1]);
+            }
+
+            this.setData({
+              dataList: this.data.dataList,
+              lastMonth: this.data.lastMonth
+            })
+
+            console.log(this.data.dataList)
+            this.init_echarts();
+          }
+        })
+      }
     }
-    
-    // dataList = [{
-    //   name: 'A',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [18, 36, 65, 30, 78, 40, 33]
-    // }, {
-    //   name: 'B',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [12, 50, 51, 35, 70, 30, 20]
-    // },{
-    //   name: 'C',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }, {
-    //   name: 'D',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }, {
-    //   name: 'E',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }, {
-    //   name: 'F',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }, {
-    //   name: 'G',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }, {
-    //   name: 'H',
-    //   type: 'line',
-    //   smooth: true,
-    //   data: [10, 30, 31, 50, 40, 20, 10]
-    // }]
-    
-    // if (!Chart){
-    //   this.init_echarts(); //初始化图表
-    // }else{
-    //   this.setOption(Chart); //更新数据
-    // }
   },
   //初始化图表
   init_echarts: function () {
@@ -209,14 +399,23 @@ Page({
     Chart.setOption(this.getOption());  //获取新数据
   },
   getOption(){
+    let title_txt = '';
+    let legend_arr = [];
+    if(this.data.type == 0 || this.data.type == 1 || this.data.type == 4){
+      title_txt = '代理人交易记录报表';
+      legend_arr = ['交易成功数量', '传播数量'];
+    }else{
+      title_txt = '销售员交易记录报表';
+      legend_arr = ['销售数量'];
+    }
     var option = {
       title: {
-        text: '促销劵出售趋势图',
+        text: title_txt,
         left: 'center'
       },
       // color: ["#37A2DA", "#67E0E3", "#9FE6B8"],
       // legend: {
-      //   data: ['A', 'B', 'C','D', 'E', 'F','G', 'H', 'I'],
+      //   data: legend_arr,
       //   bottom: 0,
       //   left: 'center',
       //   z: 100
@@ -248,29 +447,40 @@ Page({
     };
     return option;
   },
-  selectDayOrMonth(){
-    this.data.selectDayMonth = !this.data.selectDayMonth;
+  selectDayOrMonth(e){
+    let index = e.currentTarget.dataset.index;
+    // this.data.selectDayMonth = !this.data.selectDayMonth;
     this.setData({
       lastMonth: [],
       dataList: [],
-      selectDayMonth: this.data.selectDayMonth
+      selectDayMonth: index
     })
-
-    let last7 = [];
-    for(let i=0;i<=9;i++){
-      this.getLastSevenDay(i);
-      // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
-      last7.unshift(this.getLastSevenDay(i).D_before);
-    }
-    if(this.data.selectDayMonth == true){
-      this.data.lastArr = last7;
+    if(this.data.selectDayMonth == 1){
+      // 天
+      // let last7 = [];
+      // for(let i=0;i<=9;i++){
+      //   this.getLastSevenDay(i);
+      //   // 获取最近7天的日期  this.getLastSevenDay(i).M_before+'月'+
+      //   last7.unshift(this.getLastSevenDay(i).D_before);
+      // }
+      // this.data.lastArr = last7;
+      this.data.lastArr = this.data.lastMonth;
+    }else if(this.data.selectDayMonth == 2){
+      // 月
+      this.data.lastArr = this.data.lastMonth;
     }else{
+      // 小时
+      // let hours = [];
+      // for(let i=1;i<=24;i++){
+      //   hours.push(i);
+      // }
+      // this.data.lastArr = hours;
       this.data.lastArr = this.data.lastMonth;
     }
     this.setData({
       lastArr: this.data.lastArr
     })
-    this.getData();
+    this.getData(this.data.date);
   },
   /**
    * 生命周期函数--监听页面显示
@@ -304,15 +514,15 @@ Page({
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-    this.data.page++;
-    this.setData({
-      page: this.data.page
-    })
-    if(this.data.activeIndex == 0){
-      this.getAgentProfitList();
-    }else{
-      this.getSellerProfitList();
-    }
+    // this.data.page++;
+    // this.setData({
+    //   page: this.data.page
+    // })
+    // if(this.data.activeIndex == 0){
+    //   this.getAgentProfitList();
+    // }else{
+    //   this.getSellerProfitList();
+    // }
   },
 
   /**
@@ -341,45 +551,57 @@ Page({
       page: 1,
       date: e.detail.value
     })
-    if(this.data.activeIndex == 0){
+    if(this.data.type == 0 || this.data.type == 1 || this.data.type == 4){
       this.getAgentProfitList();
     }else{
       this.getSellerProfitList();
     }
+    // if(this.data.activeIndex == 0){
+    //   this.getAgentProfitList();
+    // }else{
+    //   this.getSellerProfitList();
+    // }
   },
   getAgentProfitList(){
-    queryAgentCouponDealRecordStatisticsOutline({
-      date: this.data.date,
-      pageNum: this.data.page,
-      pageSize: 20
-    }).then((res)=>{
+    let data = {
+      // date: this.data.date
+    }
+    if(this.data.type == 4){
+      data.agentId = wx.getStorageSync('userInfo').unionId
+    }
+    if(this.data.type == 0){
+      data.businessId = wx.getStorageSync('business_id')
+    }
+    queryAgentInviteRatioList(data).then((res)=>{
       if(res.code == 200){
         if(this.data.page == 1){
           this.setData({
-            list: res.data.records
+            list: res.data
           })
         }else{
           this.setData({
-            list: this.data.list.concat(res.data.records)
+            list: this.data.list.concat(res.data)
           })
         }
       }
     })
   },
   getSellerProfitList(){
-    seller_coupon_profit_list({
-      date: this.data.date,
-      pageNum: this.data.page,
-      pageSize: 20
-    }).then((res)=>{
+    let data = {
+      date: this.data.date
+    }
+    if(this.data.type == 7){
+      data.sellerId = wx.getStorageSync('userInfo').unionId
+    }
+    querySellCouponDealRecordStatisticsOutlineIsDay(data).then((res)=>{
       if(res.code == 200){
         if(this.data.page == 1){
           this.setData({
-            list: res.data.records
+            list: res.data
           })
         }else{
           this.setData({
-            list: this.data.list.concat(res.data.records)
+            list: this.data.list.concat(res.data)
           })
         }
       }

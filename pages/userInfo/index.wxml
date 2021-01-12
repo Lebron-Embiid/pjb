@@ -3,6 +3,7 @@
 </van-nav-bar> -->
 <view class="back">
   <image src="/assets/home.png" class="home_icon" bindtap="toPromotionPage"></image>
+  <van-button wx:if="{{is_login == true}}" catch:click="updateToken" class="clear_btn" color="#333333" type="primary" size="small">更新数据</van-button>
   <view class="user">
     <view bindtap="getUserLogin">
       <van-image custom-class="avatar" round width="140rpx" height="140rpx" src="{{avatar}}" />

@@ -12,7 +12,7 @@ Page({
   data: {
     page: 1,
     company_list: [],
-    roleList: ["送酒员","店员"],
+    roleList: ["配送员","店员"],
     roleNumber: [6,7],
     roleIndex: null,
     identity: ''
@@ -58,7 +58,7 @@ Page({
     createShopRole({
       shopId: item.idKey,
       userId: wx.getStorageSync('userInfo').unionId,
-      type: item.roleType
+      type: item.type==0?6:7
     }).then((res)=>{
       if(res.code == 200){
         publicFun.getModal('申请成功',false)

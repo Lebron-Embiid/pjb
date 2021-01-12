@@ -6,8 +6,8 @@ import {
   getBeerShopList
 } from '../../api/user.js'
 import publicFun from '../../utils/public.js'
-var requestUrl = 'http://192.168.1.2:8082';
-// var requestUrl = "https://b.3p3.top";
+// var requestUrl = 'http://192.168.1.2:8082';
+var requestUrl = "https://b.3p3.top";
 Page({
 
   /**
@@ -16,6 +16,7 @@ Page({
   data: {
     title: '申请店铺信息',
     id: '',
+    identity: '',
     business_id: '',
     shop_type: '',
     company_name: '',
@@ -42,7 +43,11 @@ Page({
     items: [
       {value: '1', name: '啤酒店铺', checked: 'true'},
       {value: '0', name: '啤酒厂家'}
-    ]
+    ],
+    shop_types: ['饺子店','火锅店','包子店','茶饮店','烧烤店','自助餐','快餐店','简餐店','西餐店','中餐店','地方小吃','文旅小镇','美食广场','食堂','酒店餐饮','餐饮新零售','纯外卖餐饮','早餐店'],
+    shop_index: null,
+    longitude: '',//经度
+    latitude: '',//纬度
   },
 
   /**
@@ -50,8 +55,15 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      person_phone: wx.getStorageSync('userInfo').phone
+      person_phone: wx.getStorageSync('userInfo').phone,
+      identity: wx.getStorageSync('userInfo').type
     })
+    if(options.identity){
+      this.setData({
+        identity: options.identity
+      })
+    }
+    console.log(this.data.identity)
 
     if(options.business_id){
       console.log(JSON.stringify(options))
@@ -113,11 +125,39 @@ Page({
       address: this.data.address
     })
   },
+  bindPickerChange(e){
+    this.setData({
+      shop_index: e.detail.value
+    })
+  },
+  toSearchAddress(){
+    wx.navigateTo({
+      url: '/pages/mapSearch/index'
+    })
+  },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+    const pages = getCurrentPages()
+    const currPage = pages[pages.length - 1] // 当前页
+    console.log('---返回店数据---'+JSON.stringify(currPage.data))
+    if(currPage.data.keywords){
+      this.setData({
+        address: currPage.data.keywords
+      })
+      if(currPage.data.location.length != 0){
+        this.setData({
+          longitude: currPage.data.location.split(',')[0],
+          latitude: currPage.data.location.split(',')[1]
+        })
+      }else{
+        this.setData({
+          longitude: '',
+          latitude: ''
+        })
+      }
+    }
   },
 
   /**
@@ -209,12 +249,35 @@ Page({
     //   })
     //   return;
     // }
+    if(this.data.identity != 2){
+      if(this.data.shop_index == null){
+        publicFun.getToast('请选择店铺类型')
+        return;
+      }
+    }
+    
     if(this.data.company_name==''){
       publicFun.getToast('请输入店铺名称')
       return;
     }
     if(this.data.person_name==''){
       publicFun.getToast('请输入老板名称')
+      return;
+    }
+    if(this.data.address==''){
+      if(this.data.identity == 3){
+        publicFun.getToast('请输入店铺地址')
+      }else{
+        publicFun.getToast('请输入库存地址')
+      }
+      return;
+    }
+    if(this.data.longitude=='' || this.data.latitude==''){
+      if(this.data.identity == 3){
+        publicFun.getToast('请输入正确的店铺地址')
+      }else{
+        publicFun.getToast('请输入正确的库存地址')
+      }
       return;
     }
     // if(this.data.person_phone==''){
@@ -236,6 +299,9 @@ Page({
     let data = {
       userId: wx.getStorageSync('userInfo').unionId,
       businessId: this.data.business_id,
+      shopTypeName: this.data.shop_types[this.data.shop_index],
+      longitude: this.data.longitude,
+      latitude: this.data.latitude,
       shopName: this.data.company_name,
       bossName: this.data.person_name,
       phone: this.data.person_phone,
@@ -246,6 +312,12 @@ Page({
       shopImg: this.data.shopImg,
       type: this.data.shop_type
     }
+
+    if(this.data.identity == 2){
+      // 啤酒老板
+      data.shopType = ''
+    }
+
     console.log('----提交data----'+JSON.stringify(data))
     if(this.data.is_edit == 1){
       data.idKey = this.data.id;

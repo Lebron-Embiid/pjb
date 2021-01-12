@@ -15,6 +15,16 @@
         </radio-group>
       </view>
     </view> -->
+    <view class="form_item" wx:if="{{identity==3}}">
+      <view class="form_txt">店铺类型 <text>*</text></view>
+      <view class="form_content">
+        <picker mode="selector" range="{{shop_types}}" bindchange="bindPickerChange">
+          <view class="picker">
+            {{shop_index?shop_types[shop_index]:'请选择店铺类型'}}
+          </view>
+        </picker>
+      </view>
+    </view>
     <view class="form_item">
       <view class="form_txt">店铺名称 <text>*</text></view>
       <view class="form_content"><input placeholder="请输入店铺名称" value="{{company_name}}" data-key="company_name" bindinput="getInputVal"></input></view>
@@ -36,8 +46,8 @@
       <view class="form_content"><input placeholder="请输入身份证号" value="{{person_idcard}}" data-key="person_idcard" bindinput="getInputVal"></input></view>
     </view>
     <view class="form_item">
-      <view class="form_txt">地址</view>
-      <view class="form_content"><input placeholder="请输入地址" value="{{address}}" data-key="address" bindinput="getInputVal"></input></view>
+      <view class="form_txt">{{identity==3?'店铺':'库存'}}地址 <text>*</text></view>
+      <view class="form_content"><input placeholder="{{identity==3?'请选择店铺地址':'请选择库存地址'}}" disabled value="{{address}}" data-key="address" bindtap="toSearchAddress"></input></view>
     </view>
     <view class="form_item">
       <view class="form_txt">商业执照	</view>

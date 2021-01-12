@@ -1,0 +1,29 @@
+<!--pages/huiyibang/Browse/index.wxml-->
+<view>
+  <van-cell-group>
+    <block wx:if="{{identity==0||identity==1||identity==4}}">
+      <!-- 县城老板、代理人 -->
+      <van-cell is-link title="代理人交易记录" data-url="/pages/profitList/index" bindtap="pageTo" />
+      <van-cell is-link title="代理人交易记录平均值" data-url="/pages/profitAverageList/index" bindtap="pageTo" />
+    </block>
+    <block wx:if="{{identity==3||identity==7}}">
+      <!-- 啤酒老板、餐馆老板、店员 -->
+      <van-cell is-link title="销售员交易记录" data-url="/pages/profitList/index" bindtap="pageTo" />
+      <van-cell is-link title="销售员交易记录平均值" data-url="/pages/profitAverageList/index" bindtap="pageTo" />
+    </block>
+    <block wx:if="{{identity==0||identity==1}}">
+      <!-- 县城老板 -->
+      <van-cell is-link title="店铺类型出货量" data-url="/pages/circleTable/index" bindtap="pageTo" />
+    </block>
+    <block wx:if="{{identity==0||identity==1||identity==2||identity==6}}">
+      <!-- 地图：县城、啤酒老板、配送员 -->
+      <van-cell is-link title="店铺库存情况" data-url="/pages/map/index" bindtap="pageTo" />
+    </block>
+    <block wx:if="{{identity==0||identity==1||identity==2}}">
+      <!-- 县长老板、啤酒老板 -->
+      <van-cell is-link title="啤酒配送记录" data-url="/pages/tradeRecords/index" bindtap="pageTo" />
+      <van-cell is-link title="啤酒配送总数平均值" data-url="/pages/averageRecords/index" bindtap="pageTo" />
+    </block>
+    <van-cell is-link title="统价值记录" data-url="/pages/lineMap/index" bindtap="pageTo" />
+  </van-cell-group>
+</view>

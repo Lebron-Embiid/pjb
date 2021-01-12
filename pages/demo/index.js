@@ -130,6 +130,7 @@ Page({
     }
   },
   onClickLeft() {
+    wx.setStorageSync('updateIndexCoupon', 1)
     wx.redirectTo({
       url: '/pages/userInfo/index'
     })

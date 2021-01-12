@@ -24,7 +24,7 @@
   },
 
   filterRole: function(status){
-    // 0 权益老板 1 县城老板 2 啤酒老板 3 餐馆老板 4 代理人 5 服务员 6 送酒员 7店员
+    // 0 权益老板 1 县城老板 2 啤酒老板 3 餐馆老板 4 代理人 5 服务员 6 配送员 7店员
     var status_txt = '';
     if(status == 0){
       status_txt = '权益老板'
@@ -39,7 +39,7 @@
     }else if(status == 5){
       status_txt = '服务员'
     }else if(status == 6){
-      status_txt = '送酒员'
+      status_txt = '配送员'
     }else if(status == 7){
       status_txt = '店员'
     }else{
@@ -64,6 +64,20 @@
       status_txt = '取消配送';
     }
     return status_txt;
+  },
+
+  levelStatus: function(status){
+    var status_txt = '';
+    if(status == 1){
+      status_txt = '安全';
+    }else if(status == 2){
+      status_txt = '警告';
+    }else if(status == 3){
+      status_txt = '危险';
+    }else if(status == 4){
+      status_txt = '未知';
+    }
+    return status_txt;
   }
  }
 
@@ -71,5 +85,6 @@
   filterStatus: status.filterStatus,
   filterStatus1: status.filterStatus1,
   filterRole: status.filterRole,
-  deliveryStatus: status.deliveryStatus
+  deliveryStatus: status.deliveryStatus,
+  levelStatus: status.levelStatus
  }

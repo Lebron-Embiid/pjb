@@ -1,0 +1,6 @@
+<!--pages/shipment/index.wxml-->
+<view class="chart_btn">
+  <view><text class="{{selectDayMonth==0?'active':''}}" data-index="0" bindtap="selectDayOrMonth"> 天 </text></view> 
+  <view><text class="{{selectDayMonth==1?'active':''}}" data-index="1" bindtap="selectDayOrMonth"> 月 </text></view> 
+</view>
+<ec-canvas id="mychart" canvas-id="mychart-line" ec="{{ ec }}"></ec-canvas>

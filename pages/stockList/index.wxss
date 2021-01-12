@@ -1,1 +1,77 @@
 /* pages/qinqinhehe/companyApprove/index.wxss */
+.company_box{
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+.seller_coupon_item{
+  padding: 30rpx 20rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #cccccc;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+.coupon_type{
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #ffffff;
+  font-size: 22rpx;
+  padding: 10rpx 20rpx;
+  box-sizing: border-box;
+  background: #cccccc;
+  border-top-right-radius: 12rpx;
+}
+.coupon_type.aq{
+  background: #00ca00;
+}
+.coupon_type.jg{
+  background: #ff9800;
+}
+.coupon_type.wx{
+  background: #ff0000;
+}
+.seller_top,.seller_bottom{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.seller_top{
+  margin-bottom: 10rpx;
+}
+.seller_top text,.seller_bottom text{
+  color: #999999;
+  font-size: 28rpx;
+}
+.nav_list{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+.nav_list view{
+  width: 30%;
+  text-align: center;
+  color: #333333;
+  font-size: 30rpx;
+  border: 1px solid #333333;
+  padding: 10rpx 0;
+  box-sizing: border-box;
+  border-radius: 20rpx 20rpx 0 0;
+}
+.nav_list view.on{
+  color: #ffffff;
+}
+.nav_list view.danger{
+  background: #ff0000;
+  border: 1px solid #ff0000;
+}
+.nav_list view.warn{
+  background: #ff9800;
+  border: 1px solid #ff9800;
+}
+.nav_list view.primary{
+  background: #00ca00;
+  border: 1px solid #00ca00;
+}

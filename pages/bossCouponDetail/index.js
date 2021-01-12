@@ -35,7 +35,8 @@ Page({
   },
   toBossApply(){
     applyCouponAgent({
-      couponId: this.data.coupon_id
+      couponId: this.data.coupon_id,
+      agentId: wx.getStorageSync('userInfo').unionId
     }).then(ress=>{
       if(ress.code == 200){
         wx.showToast({

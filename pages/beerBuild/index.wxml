@@ -9,8 +9,8 @@
     <view class="form_content"><input placeholder="请输入警告值" type="number" value="{{warn_val}}" bindinput="getWarn"></input></view>
   </view>
   <view class="form_item">
-    <text class="form_txt">危险值</text>
-    <view class="form_content"><input placeholder="请输入危险值" type="number" value="{{danger_val}}" bindinput="getDanger"></input></view>
+    <text class="form_txt">危险值 （小于警告值就是危险值）</text>
+    <!-- <view class="form_content"><input placeholder="请输入危险值" type="number" value="{{danger_val}}" bindinput="getDanger"></input></view> -->
   </view>
   <view class="btn_box">
     <button type="primary" bindtap="addSubmit">提交</button>

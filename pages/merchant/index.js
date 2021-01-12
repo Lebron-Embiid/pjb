@@ -9,8 +9,8 @@ import {
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
-var requestUrl = 'http://192.168.1.2:8082';
-// var requestUrl = "https://b.3p3.top"
+// var requestUrl = 'http://192.168.1.2:8082';
+var requestUrl = "https://b.3p3.top"
 Page({
 
   /**
@@ -32,6 +32,10 @@ Page({
     book_img: '',
     is_book: 0,
     is_pass: 0,
+    address: '',
+    longitude: '',
+    latitude: '',
+    area: '',
 
     apply_type: '1',
     company_list: [{name: '县城老板',value: '1',checked: true},{name: '啤酒老板',value: '2',checked: false},{name: '餐馆老板',value: '3',checked: false}]
@@ -55,7 +59,30 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+    const pages = getCurrentPages()
+    const currPage = pages[pages.length - 1] // 当前页
+    console.log('---返回店数据---'+JSON.stringify(currPage.data))
+    if(currPage.data.keywords){
+      this.setData({
+        address: currPage.data.keywords
+      })
+      if(currPage.data.location.length != 0){
+        this.setData({
+          longitude: currPage.data.location.split(',')[0],
+          latitude: currPage.data.location.split(',')[1]
+        })
+      }else{
+        this.setData({
+          longitude: '',
+          latitude: ''
+        })
+      }
+    }
+    if(currPage.data.area){
+      this.setData({
+        area: currPage.data.area
+      })
+    }
   },
 
   /**
@@ -97,36 +124,48 @@ Page({
       userId: wx.getStorageSync('userInfo').unionId
     }).then((res)=>{
       if(res.code == 200){
-        if(res.data.status == 0){
-          // 审批中
-          this.setData({
-            is_pass: 1,
-            business_id: ''
-          })
-        }else if(res.data.status == 1){
-          // 通过
-          wx.setNavigationBarTitle({
-            title: '修改资料'
-          })
-          this.setData({
-            business_id: res.data.businessId,
-            name: res.data.bossName,
-            license: res.data.licenseImg,
-            is_license: res.data.licenseImg==''?0:1,
-            back_img: res.data.businessImg,
-            is_back: res.data.businessImg==''?0:1,
-            person_name: res.data.legalPerson,
-            card: res.data.idnumber,
-            person_code: res.data.uscc,
-            company_name: res.data.businessName,
-            card_img: res.data.idnumberImg,
-            is_card: res.data.idnumberImg==''?0:1,
-            book_img: res.data.authorizeImg,
-            is_book: res.data.authorizeImg==''?0:1,
-            is_pass: 0
-          })
+        if(res.data != null){
+          if(res.data.status == 0){
+            // 审批中
+            this.setData({
+              is_pass: 1,
+              business_id: ''
+            })
+          }else if(res.data.status == 1){
+            // 通过
+            wx.setNavigationBarTitle({
+              title: '修改资料'
+            })
+            this.setData({
+              business_id: res.data.businessId,
+              name: res.data.bossName,
+              license: res.data.licenseImg,
+              is_license: res.data.licenseImg==''?0:1,
+              back_img: res.data.businessImg,
+              is_back: res.data.businessImg==''?0:1,
+              person_name: res.data.legalPerson,
+              card: res.data.idnumber,
+              person_code: res.data.uscc,
+              company_name: res.data.businessName,
+              card_img: res.data.idnumberImg,
+              is_card: res.data.idnumberImg==''?0:1,
+              book_img: res.data.authorizeImg,
+              is_book: res.data.authorizeImg==''?0:1,
+              is_pass: 0
+            })
+          }
         }
       }
+    })
+  },
+  toSearchArea(){
+    wx.navigateTo({
+      url: '/pages/mapSearch/index?type=area'
+    })
+  },
+  toSearchAddress(){
+    wx.navigateTo({
+      url: '/pages/mapSearch/index'
     })
   },
   radioChange(e){
@@ -309,44 +348,40 @@ Page({
     //   return;
     // }
     if(this.data.company_name==''){
-      wx.showToast({
-        title: '请输入企业名称',
-        icon: 'none'
-      })
+      publicFun.getToast('请输入企业名称')
       return;
     }
     if(this.data.person_name==''){
-      wx.showToast({
-        title: '请输入法人名称',
-        icon: 'none'
-      })
+      publicFun.getToast('请输入法人名称')
       return;
     }
     // if(this.data.person_code==''){
-    //   wx.showToast({
-    //     title: '请输入统一社会信用代码',
-    //     icon: 'none'
-    //   })
+    //   publicFun.getToast('请输入统一社会信用代码')
     //   return;
     // }
     // if(this.data.license==''){
-    //   wx.showToast({
-    //     title: '请上传执照',
-    //     icon: 'none'
-    //   })
+    //   publicFun.getToast('请上传执照')
     //   return;
     // }
     if(this.data.back_img==''){
-      wx.showToast({
-        title: '请上传企业背景图片',
-        icon: 'none'
-      })
+      publicFun.getToast('请上传企业背景图片')
+      return;
+    }
+    if(this.data.address==''){
+      publicFun.getToast('请输入县城区域')
+      return;
+    }
+    if(this.data.longitude=='' || this.data.latitude==''){
+      publicFun.getToast('请输入正确的地址')
       return;
     }
     console.log(this.data.business_id)
     let data = {
       userId: wx.getStorageSync('userInfo').unionId,
       businessId: this.data.business_id,
+      county: this.data.address,
+      longitude: this.data.longitude,
+      latitude: this.data.latitude,
       businessName: this.data.company_name,//企业名称
       legalPerson: this.data.person_name,//法人名称
       uscc: this.data.person_code,//统一社会信用代码

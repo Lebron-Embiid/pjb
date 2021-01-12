@@ -855,9 +855,9 @@ export function scanViewVideo(data) {
   })
 }
 // 获取用户视频浏览记录
-export function queryUserVideoBrowseRecord(data) {
+export function queryUserVideoBrowseRecord(data,pageNum,pageSize) {
   return request({
-    url: "/video/browse/record/queryUserVideoBrowseRecord",
+    url: "/video/browse/record/queryUserVideoBrowseRecord?pageNum="+pageNum+'&pageSize='+pageSize,
     method: "GET",
     data
   })
@@ -1074,9 +1074,9 @@ export function previewSellCouponImg(data) {
   })
 }
 // 查看出售成功优惠券列表
-export function querySellSuccessCouponImgList(data) {
+export function querySellSuccessCouponImgList(data,pageNum,pageSize) {
   return request({
-    url: "/coupon/sell/querySellSuccessCouponImgList",
+    url: "/coupon/sell/querySellSuccessCouponImgList?pageNum="+pageNum+'&pageSize='+pageSize,
     method: "POST",
     data
   })
@@ -1122,18 +1122,18 @@ export function getBeerStock(data) {
     data
   })
 }
-// 获取店铺啤酒库存集合
+// 获取店铺啤酒库存列表
 export function getBeerStockList(data) {
   return request({
-    url: "/shop/stock/getList",
+    url: "/shop/stock/queryShopStockList",
     method: "POST",
     data
   })
 }
 // 查询库存情况集合
-export function queryShopBeerStockCaseList(data) {
+export function queryShopBeerStockCaseList(data,level) {
   return request({
-    url: "/shop/stock/queryShopStockCaseList",
+    url: "/shop/stock/queryShopStockCaseList?stockNormLevel="+level,
     method: "POST",
     data
   })
@@ -1146,6 +1146,24 @@ export function updateByIdBeerStock(data) {
     data
   })
 }
+// 查询库存情况记录集合
+export function queryStockCaseRecordList(data) {
+  return request({
+    url: "/stock/case/record/queryStockCaseRecordList",
+    method: "POST",
+    data
+  })
+}
+
+// 内容转换二维码
+export function contentToCode(data) {
+  return request({
+    url: "/code/contentToCode",
+    method: "GET",
+    data
+  })
+}
+
 
 // 变更啤酒配送状态
 export function changeBeerDeliveryStatus(data) {
@@ -1238,20 +1256,151 @@ export function getCouponDealRecordList(data) {
     data
   })
 }
-// 查看代理人优惠券交易记录统计大纲
-export function queryAgentCouponDealRecordStatisticsOutline(data) {
+// 查看代理人优惠券交易记录统计大纲（天）
+export function queryAgentCouponDealRecordStatisticsOutlineIsDay(data) {
   return request({
-    url: "/coupon/deal/record/queryAgentCouponDealRecordStatisticsOutline",
+    url: "/coupon/deal/record/queryAgentCouponDealRecordStatisticsOutlineIsDay",
     method: "POST",
     data
   })
 }
-// 查看销售员优惠券交易记录统计大纲
-export function querySellCouponDealRecordStatisticsOutline(data) {
+// 查看代理人优惠券交易记录统计大纲（小时）
+export function queryAgentCouponDealRecordStatisticsOutlineIsHour(data) {
   return request({
-    url: "/coupon/deal/record/querySellCouponDealRecordStatisticsOutline",
+    url: "/coupon/deal/record/queryAgentCouponDealRecordStatisticsOutlineIsHour",
+    method: "POST",
+    data
+  })
+}
+// 查看代理人优惠券交易记录统计大纲（月）
+export function queryAgentCouponDealRecordStatisticsOutlineIsMonth(data) {
+  return request({
+    url: "/coupon/deal/record/queryAgentCouponDealRecordStatisticsOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}
+// 查看销售员优惠券交易记录统计大纲（天）
+export function querySellCouponDealRecordStatisticsOutlineIsDay(data) {
+  return request({
+    url: "/coupon/deal/record/querySellCouponDealRecordStatisticsOutlineIsDay",
+    method: "POST",
+    data
+  })
+}
+// 查看销售员优惠券交易记录统计大纲（小时）
+export function querySellCouponDealRecordStatisticsOutlineIsHour(data) {
+  return request({
+    url: "/coupon/deal/record/querySellCouponDealRecordStatisticsOutlineIsHour",
+    method: "POST",
+    data
+  })
+}
+// 查看销售员优惠券交易记录统计大纲（月）
+export function querySellCouponDealRecordStatisticsOutlineIsMonth(data) {
+  return request({
+    url: "/coupon/deal/record/querySellCouponDealRecordStatisticsOutlineIsMonth",
     method: "POST",
     data
   })
 }
 
+// 查看店铺类型出货量（年）（县城老板）
+export function queryShopTypeShipmentStatisticsOutlineIsYear(data) {
+  return request({
+    url: "/coupon/consume/record/queryShopTypeShipmentStatisticsOutlineIsYear",
+    method: "POST",
+    data
+  })
+}
+// 展示店铺库存情况集合 (地图：县城、啤酒老板、配送员)
+export function viewShopStockCaseList(data) {
+  return request({
+    url: "/beer/shop/viewShopStockCaseList",
+    method: "POST",
+    data
+  })
+}
+
+// 查看代理人优惠券交易记录平均值统计大纲（天）
+export function queryAgentCouponDealRecordAverageOutlineIsDay(data) {
+  return request({
+    url: "/coupon/deal/record/queryAgentCouponDealRecordAverageOutlineIsDay",
+    method: "POST",
+    data
+  })
+}
+// 查看代理人优惠券交易记录平均值统计大纲（月）
+export function queryAgentCouponDealRecordAverageOutlineIsMonth(data) {
+  return request({
+    url: "/coupon/deal/record/queryAgentCouponDealRecordAverageOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}
+// 查看销售员优惠券交易记录平均值统计大纲（天）
+export function querySellCouponDealRecordAverageOutlineIsDay(data) {
+  return request({
+    url: "/coupon/deal/record/querySellCouponDealRecordAverageOutlineIsDay",
+    method: "POST",
+    data
+  })
+}
+// 查看销售员优惠券交易记录平均值统计大纲（月）
+export function querySellCouponDealRecordAverageOutlineIsMonth(data) {
+  return request({
+    url: "/coupon/deal/record/querySellCouponDealRecordAverageOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}
+
+// 查询啤酒配送 平均值、最大值、最小值（天）
+export function queryDiliverymanBeerDeliverySyllogeOutlineIsDay(data) {
+  return request({
+    url: "/beer/delivery/queryDiliverymanBeerDeliverySyllogeOutlineIsDay",
+    method: "POST",
+    data
+  })
+}
+// 查询啤酒配送 平均值、最大值、最小值（月）
+export function queryDiliverymanBeerDeliverySyllogeOutlineIsMonth(data) {
+  return request({
+    url: "/beer/delivery/queryDiliverymanBeerDeliverySyllogeOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}
+
+// 配送记录报表（天）
+export function queryBeerDeliveryStatisticsOutlineIsDay(data) {
+  return request({
+    url: "/beer/delivery/queryBeerDeliveryStatisticsOutlineIsDay",
+    method: "POST",
+    data
+  })
+}
+// 配送记录报表（月）
+export function queryBeerDeliveryStatisticsOutlineIsMonth(data) {
+  return request({
+    url: "/beer/delivery/queryBeerDeliveryStatisticsOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}
+// 查询啤酒配送总数平均值（天）
+export function queryBeerDeliveryAverageOutlineIsIsDay(data) {
+  return request({
+    url: "/beer/delivery/queryBeerDeliveryAverageOutlineIsIsDay",
+    method: "POST",
+    data
+  })
+}
+// 查询啤酒配送总数平均值（月）
+export function queryBeerDeliveryAverageOutlineIsMonth(data) {
+  return request({
+    url: "/beer/delivery/queryBeerDeliveryAverageOutlineIsMonth",
+    method: "POST",
+    data
+  })
+}

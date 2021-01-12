@@ -60,7 +60,7 @@ Page({
     console.log(JSON.stringify(e))
     if(index == 0 || index == 1){
       wx.navigateTo({
-        url: '/pages/applyShop/index?type='+index+'&business_id='+item.businessId
+        url: '/pages/applyShop/index?type='+index+'&business_id='+item.businessId+'&identity='+this.data.roleNumber[index]
       })
     }else{
       createBusinessRole({

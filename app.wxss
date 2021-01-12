@@ -105,6 +105,9 @@
 .nav_content_box .content_item .info_right .info_btn button{
   font-size: 24rpx;
 }
+button{
+  margin-bottom: 5rpx;
+}
 
 .form_box .form_item .form_txt{
   color: #999;

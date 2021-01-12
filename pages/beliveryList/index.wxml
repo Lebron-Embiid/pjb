@@ -1,22 +1,40 @@
 <!--pages/buildList/index.wxml-->
-<view class="build_box">
+<view class="build_box" wx:if="{{beerList.length!=0}}">
   <wxs src="../../filter/status.wxs" module="status"></wxs>
   <view class="house_item" wx:for="{{beerList}}" wx:key="index" data-index="{{index}}">
     <view class="house_box">
       <view class="item">啤酒类型：{{item.beerTypeName?item.beerTypeName:'通用'}}</view>
       <view class="item">配送啤酒数量：{{item.beerCount}}</view>
       <view class="item">配送店铺：{{item.deliveryShopName}}</view>
-      <view class="item">配送员：{{item.deliveryName?item.deliveryName:''}}</view>
+      <view class="item">配送员：{{item.deliveryRealName?item.deliveryRealName:item.deliveryNickname}}</view>
       <view class="item">收货店铺：{{item.takeShopName}}</view>
-      <view class="item">收货人：{{item.takeName?item.takeName:''}}</view>
+      <view class="item">收货人：{{item.takeRealName?item.takeRealName:item.takeNickname}}</view>
       <view class="status">状态：{{status.deliveryStatus(item.deliveryStatus)}}</view>
     </view>
-    <view class="house_edit">
-      <button size="mini" type="primary" data-item="{{item}}" catchtap="updateDerviry">修改</button>
-      <!-- <button size="mini" type="warn" data-id="{{item.deliveryIdKey}}" catchtap="deleteDerviry">删除</button> -->
-      <button size="mini" type="default" data-id="{{item.deliveryIdKey}}" catchtap="cancelDerviry">取消配送</button>
+    <view class="house_edit" wx:if="{{identity==2}}">
+      <button wx:if="{{item.deliveryStatus==0}}" size="mini" type="primary" data-item="{{item}}" catchtap="updateDerviry">修改</button>
+      <!-- <button size="mini" type="warn" data-id="{{item.deliveryIdKey}}" data-status="3" catchtap="clickDerviry">删除</button> -->
+      <button wx:if="{{item.deliveryStatus==1}}" size="mini" type="default" data-id="{{item.deliveryIdKey}}" data-status="5" catchtap="clickDerviry">取消配送</button>
+      <button wx:if="{{item.deliveryStatus==0}}" size="mini" type="primary" data-id="{{item.deliveryIdKey}}" data-status="1" catchtap="clickDerviry">配送</button>
+      <button wx:if="{{item.deliveryStatus==1}}" size="mini" type="primary" data-id="{{item.deliveryIdKey}}" catchtap="showUserCode">展示二维码</button>
+    </view>
+    <view class="house_edit" wx:if="{{identity==6}}">
+      <button wx:if="{{item.deliveryStatus==1}}" size="mini" type="default" data-id="{{item.deliveryIdKey}}" data-status="5" catchtap="clickDerviry">取消配送</button>
+      <button wx:if="{{item.deliveryStatus==0}}" size="mini" type="primary" data-id="{{item.deliveryIdKey}}" data-status="1" catchtap="clickDerviry">配送</button>
+      <button wx:if="{{item.deliveryStatus==1}}" size="mini" type="primary" data-id="{{item.deliveryIdKey}}" catchtap="showUserCode">展示二维码</button>
+    </view>
+    <view class="house_edit" wx:if="{{identity==3||identity==7}}">
+      <block wx:if="{{item.deliveryStatus==1}}">
+        <button size="mini" type="primary" data-id="{{item.deliveryIdKey}}" data-status="2" catchtap="clickDerviry">签收</button>
+        <button size="mini" type="warn" data-id="{{item.deliveryIdKey}}" data-status="4" catchtap="clickDerviry">拒收</button>
+      </block>
     </view>
   </view>
 </view>
+<view class="no_data_txt" wx:else>暂无数据</view>
 
-<view class="fixed_bottom_btn" bindtap="add" bindtap="add">添加配送</view>
+<view class="{{is_showCode == true?'user_code_box show':'user_code_box'}}" bindtap="hideUserCode">
+  <image src="{{user_code}}" mode="widthFix"></image>
+</view>
+
+<view class="fixed_bottom_btn" wx:if="{{identity==2||identity==6}}" bindtap="add" bindtap="add">添加配送</view>

@@ -1,5 +1,27 @@
 <!--pages/qinqinhehe/companyApprove/index.wxml-->
-<view class="company_box" wx:if="{{list.length==0}}">
-  
+<view class="company_box">
+  <wxs src="../../filter/status.wxs" module="status"></wxs>
+  <block wx:if="{{from_type==0}}">
+    <view wx:if="{{list.length!=0}}">
+      <view class="seller_coupon_item" wx:for="{{list}}" wx:key="index">
+        <view class="seller_top"><text>啤酒类型：{{item.beerTypeName?item.beerTypeName:'通用'}}</text><text>啤酒余量：{{item.beerSurplus}}</text></view>
+      </view>
+    </view>
+    <view class="no_data_txt" wx:else>暂无数据</view>
+  </block>
+  <block wx:else>
+    <!-- <view class="nav_list">
+      <view bindtap="clickNav" data-index="{{index}}" class="{{index==0?'danger':index==1?'warn':'primary'}} {{nav_active==index?'on':''}}" wx:for="{{nav_list}}" wx:key="index">{{item}}</view>
+    </view> -->
+    <view wx:if="{{list.length!=0}}">
+      <view class="seller_coupon_item" wx:for="{{list}}" wx:key="index">
+        <view class="seller_top"><text>店铺名称：{{item.diningShopName}}</text></view>
+        <view class="seller_top"><text>厂家名称：{{item.factoryShopName}}</text></view>
+        <view class="seller_top"><text>备注：{{item.remark}}</text></view>
+        <view class="seller_bottom"><text>啤酒类型：{{item.beerTypeName?item.beerTypeName:'通用'}}</text><text>啤酒余量：{{item.beerSurplus}}</text></view>
+        <view class="coupon_type {{item.caseLevel==1?'aq':item.caseLevel==2?'jg':item.caseLevel==3?'wx':''}}">{{status.levelStatus(item.caseLevel)}}</view>
+      </view>
+    </view>
+    <view class="no_data_txt" wx:else>暂无数据</view>
+  </block>
 </view>
-<view class="no_data_txt" wx:else>暂无数据</view>

@@ -1,8 +1,10 @@
 // pages/buildList/index.js
 import {
   queryUserBeerDeliveryList,
-  changeBeerDeliveryStatus
+  changeBeerDeliveryStatus,
+  contentToCode
 } from '../../api/user.js'
+import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
 Page({
 
@@ -10,14 +12,20 @@ Page({
    * 页面的初始数据
    */
   data: {
-    beerList: []
+    user_code: '',
+    is_showCode: false,
+    beerList: [],
+    identity: '',
+    get_id: '',//签收id
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.setData({
+      identity: wx.getStorageSync('userInfo').type
+    })
   },
 
   /**
@@ -35,8 +43,14 @@ Page({
   },
   getShowInitList(){
     let data = {}
-    if(wx.getStorageSync('userInfo').type == 6){
-      data.userId = wx.getStorageSync('userInfo').unionId
+    if(this.data.identity == 2){
+      data.deliveryShopId = wx.getStorageSync('shop_id')
+    }
+    if(this.data.identity == 6){
+      data.deliveryUserId = wx.getStorageSync('userInfo').unionId
+    }
+    if(this.data.identity == 3 || this.data.identity == 7){
+      data.takeShopId = wx.getStorageSync('shop_id')
     }
     queryUserBeerDeliveryList(data).then((der_res)=>{
       if(der_res.code == 200){
@@ -57,17 +71,51 @@ Page({
       url: '/pages/beerDelivery/index?is_from=edit&data='+encodeURIComponent(JSON.stringify(item))
     })
   },
-  deleteDerviry(e){
+  clickDerviry(e){
     let that = this;
     let id = e.currentTarget.dataset.id;
+    let status = e.currentTarget.dataset.status;
+    let txt = '';
+    if(status == 1){
+      txt = '配送';
+    }else if(status == 2){
+      txt = '签收';
+    }else if(status == 3){
+      txt = '删除';
+    }else if(status == 4){
+      txt = '拒收';
+    }else if(status == 5){
+      txt = '取消配送';
+    }
+    if(status == 2){
+      wx.scanCode({
+        success: function(scan){
+          console.log('签收id---'+JSON.stringify(scan))
+          if(scan.result == id){
+            changeBeerDeliveryStatus({
+              idKey: id,
+              status: status,
+            }).then((res)=>{
+              if(res.code == 200){
+                publicFun.getModal('签收成功',false);
+                that.getShowInitList();
+              }
+            })
+          }else{
+            publicFun.getToast('签收失败，请选择正确的二维码');
+          }
+        }
+      })
+      return;
+    }
     wx.showModal({
       title: "提示",
-      content: "确定要删除吗?",
+      content: "确定要"+txt+"吗?",
       success: function(mos){
         if(mos.confirm){
           changeBeerDeliveryStatus({
             idKey: id,
-            status: 3
+            status: status
           }).then((res)=>{
             if(res.code == 200){
               that.getShowInitList();
@@ -77,24 +125,32 @@ Page({
       }
     })
   },
-  cancelDerviry(e){
-    let that = this;
+  showUserCode(e){
     let id = e.currentTarget.dataset.id;
-    wx.showModal({
-      title: "提示",
-      content: "确定要取消配送吗?",
-      success: function(mos){
-        if(mos.confirm){
-          changeBeerDeliveryStatus({
-            idKey: id,
-            status: 5
-          }).then((res)=>{
-            if(res.code == 200){
-              that.getShowInitList();
-            }
+    if(wx.getStorageSync('check') == 1){
+      contentToCode({
+        content: id
+      }).then((res)=>{
+        if(res.code == 200){
+          let base64 = "data:image/png;base64," + res.data;
+          base64src(base64,id,image=>{
+            this.setData({
+              user_code: image,
+              is_showCode: true
+            })
           })
         }
-      }
+      })
+    }else{
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      })
+    }
+  },
+  hideUserCode(){
+    this.setData({
+      is_showCode: false
     })
   },
   /**

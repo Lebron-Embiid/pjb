@@ -34,9 +34,7 @@ Page({
   },
   getShopRoleList(){
     getShopRoleInfoList({
-      pageNum: this.data.page,
-      pageSize: 20,
-      shopType: wx.getStorageSync('role_identity')
+      shopId: wx.getStorageSync('shop_id')
     }).then((res)=>{
       if(res.code == 200){
         if(this.data.length != 0){
@@ -79,7 +77,12 @@ Page({
         status: 1
       }).then((res)=>{
         if(res.code == 200){
-          this.getRoleList();
+          if(this.data.type == 'shop'){
+            // 店铺
+            this.getShopRoleList();
+          }else{
+            this.getRoleList();
+          }
         }
       })
     }else{
@@ -90,7 +93,12 @@ Page({
         status: 1
       }).then((res)=>{
         if(res.code == 200){
-          this.getRoleList();
+          if(this.data.type == 'shop'){
+            // 店铺
+            this.getShopRoleList();
+          }else{
+            this.getRoleList();
+          }
         }
       })
     }
@@ -105,7 +113,12 @@ Page({
         status: 2
       }).then((res)=>{
         if(res.code == 200){
-          this.getRoleList();
+          if(this.data.type == 'shop'){
+            // 店铺
+            this.getShopRoleList();
+          }else{
+            this.getRoleList();
+          }
         }
       })
     }else{
@@ -116,7 +129,12 @@ Page({
         status: 2
       }).then((res)=>{
         if(res.code == 200){
-          this.getRoleList();
+          if(this.data.type == 'shop'){
+            // 店铺
+            this.getShopRoleList();
+          }else{
+            this.getRoleList();
+          }
         }
       })
     }

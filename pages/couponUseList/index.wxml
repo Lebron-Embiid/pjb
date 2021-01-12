@@ -1,8 +1,9 @@
 <!--pages/couponUseList/index.wxml-->
 <view class="nav_content" wx:if="{{couponList.length!=0}}">
   <view class="seller_coupon_item" wx:for="{{couponList}}" wx:key="index">
-    <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
-    <view class="seller_bottom"><text></text><text>促销面值：{{item.value}}</text></view>
+    <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.consumeTime}}</text></view>
+    <view class="seller_top"><text>消费店铺：{{item.shopName}}</text><text>验证人：{{item.sellerName}}</text></view>
+    <view class="seller_bottom"><text>类型：{{item.type==0?'出售':'消费'}}</text><text>消费数量：{{item.consumeNumber}}</text></view>
   </view>
 </view>
 <view class="no_data_txt" wx:else>暂无数据</view>

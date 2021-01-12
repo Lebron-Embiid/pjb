@@ -1,4 +1,5 @@
 import {
+  refreshUserInfo,
   getInfo,
   appRole,
   getCode,
@@ -64,9 +65,14 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    var that = this;
     console.log(wx.getStorageSync('token'));
     // this.userInfo();
-    
+    wx.checkSession({
+      success () {
+        that.updateCoupon();
+      }
+    })
     // this.getLookList();
   },
   onShow() {
@@ -80,6 +86,11 @@ Page({
           key: 'check',
         })
         that.getUserInfo();
+
+        if(wx.getStorageSync('updateIndexCoupon') == 1){
+          that.updateCoupon();
+          wx.removeStorageSync('updateIndexCoupon')
+        }
         // 用户二维码
         // showUserQRCode().then((res)=>{
         //   const base64ImgUrl = "data:image/png;base64," + res.data;
@@ -100,6 +111,21 @@ Page({
       }
     })
   },
+  updateCoupon(){
+    this.setData({
+      look_list: [],
+      collect_list: [],
+      coupon_list: [],
+      sellerList1: [],
+      sellerList2: [],
+      page: 1,
+      page1: 1,
+      page2: 1,
+      page3: 1
+    })
+    this.getLookList();
+    this.getBuyList();
+  },
   getUserInfo(){
     // 用户二维码
     // showUserQRCode().then((res)=>{
@@ -118,19 +144,8 @@ Page({
       avatar: userinfo.headPortraitLink,
       name: userinfo.nickname,
       phone: userinfo.phone,
-      identity: userinfo.type,
-      look_list: [],
-      collect_list: [],
-      coupon_list: [],
-      sellerList1: [],
-      sellerList2: [],
-      page: 1,
-      page1: 1,
-      page2: 1,
-      page3: 1
+      identity: userinfo.type
     })
-    this.getLookList();
-    this.getBuyList();
     // if(this.data.identity != 'seller'){
     //   // this.getLookList();
     //   // this.getCollectList();
@@ -189,10 +204,7 @@ Page({
   },
   getLookList() {
     //浏览列表
-    queryUserVideoBrowseRecord({
-      pageNum: this.data.page1,
-      pageSize: 5
-    }).then(lookres=>{
+    queryUserVideoBrowseRecord({},this.data.page1,5).then(lookres=>{
       if(lookres.code == 200){
         if(this.data.page1 == 1){
           this.setData({
@@ -238,9 +250,8 @@ Page({
   },
   getBuyList(){
     querySellSuccessCouponImgList({
-      pageNum: this.data.page3,
-      pageSize: 5
-    }).then(buyres=>{
+      consumerId: wx.getStorageSync('userInfo').unionId
+    },this.data.page3,5).then(buyres=>{
       if(buyres.code == 200){
         if(this.data.page3 == 1){
           this.setData({
@@ -474,7 +485,7 @@ Page({
   selectLook(e){
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: '/pages/couponDetail/index?type=look&src='+this.data.look_list[index].coupon+'&id='+this.data.look_list[index].coupon_id
+      url: '/pages/couponDetail/index?type=look&src='+this.data.look_list[index].coupon+'&id='+this.data.look_list[index].idKey
     })
   },
   toCollect(e){
@@ -506,6 +517,22 @@ Page({
     let index = e.currentTarget.dataset.index;
     wx.navigateTo({
       url: '/pages/couponDetail/index?type=buy&buy=ok&src='+this.data.coupon_list[index].coupon+'&id='+this.data.coupon_list[index].idKey+'&number='+this.data.coupon_list[index].number
+    })
+  },
+  updateToken(){
+    var that = this;
+    refreshUserInfo().then((res)=>{
+      if(res.code == 200){
+        wx.setStorageSync('token', res.data.token);
+
+        getInfo().then(login_res=>{
+          if(login_res.code == 200){
+            wx.setStorageSync('userInfo', login_res.data);
+            that.updateCoupon();
+            that.onShow();
+          }
+        })
+      }
     })
   },
   clickItem(e){

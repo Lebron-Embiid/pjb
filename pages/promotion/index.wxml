@@ -73,8 +73,8 @@
   <van-popup show="{{show_beer_num}}" bind:close="onClick">
     <view class="show_beer_box">
       <view class="show_title">请输入验证的啤酒数量</view>
-      <input type="number" value="{{beer_num}}"/>
-      <button type="primary" size="mini">确定</button>
+      <input type="number" bindinput="changeBeerNum" value="{{beer_num}}"/>
+      <button type="primary" size="mini" bindtap="vertifyCoupon">确定</button>
     </view>
   </van-popup>
 </view>

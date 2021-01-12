@@ -59,7 +59,7 @@ Page({
         idKey: this.data.id,
         secureValue: this.data.secure_val,
         warnValue: this.data.warn_val,
-        dangerValue: this.data.danger_val,
+        // dangerValue: this.data.danger_val,
         userId: wx.getStorageSync('userInfo').unionId,
         shopId: wx.getStorageSync('shop_id')
       }).then((res)=>{
@@ -74,7 +74,7 @@ Page({
       buildSystemConfig({
         secureValue: this.data.secure_val,
         warnValue: this.data.warn_val,
-        dangerValue: this.data.danger_val,
+        // dangerValue: this.data.danger_val,
         userId: wx.getStorageSync('userInfo').unionId,
         shopId: wx.getStorageSync('shop_id')
       }).then((res)=>{

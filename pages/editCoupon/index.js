@@ -25,7 +25,7 @@ Page({
     is_edit: false,
     couponId: '',
     video_list: [{sort: 1,videoName: '视频1',weseeLink: ''},{sort: 2,videoName: '视频2',weseeLink: ''},{sort: 3,videoName: '视频3',weseeLink: ''}],
-    beer_type: [{idKey: '-1',name: '通用'}],
+    beer_type: [{idKey: '-1',name: '请选择'}],
     beer_index: 0
   },
 
@@ -62,6 +62,11 @@ Page({
       businessId: wx.getStorageSync('business_id')
     }).then((res)=>{
       if(res.code == 200){
+        if(res.data.length!=0){
+          this.setData({
+            beer_type: []
+          })
+        }
         for(let i in res.data){
           this.data.beer_type.push({
             idKey: res.data[i].idKey,
@@ -214,6 +219,10 @@ Page({
     })
   },
   save(){
+    if(this.data.beer_type[this.data.beer_index].name == '请选择'){
+      publicFun.getToast('请选择啤酒类型');
+      return;
+    }
     if(this.data.price == ''){
       publicFun.getToast('请输入促销券价格');
       return;
@@ -238,6 +247,22 @@ Page({
       publicFun.getToast('请至少上传一个视频链接');
       return;
     }
+    for(let i in this.data.video_list){
+      if(this.data.video_list[i].weseeLink.indexOf('challenge') != '-1'){
+        // 微视挑战类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[0].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+
+      if(this.data.video_list[i].weseeLink.indexOf('isee.weishi') != '-1'){
+        // 微视isee类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[1].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+    }
+
     // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
     //   publicFun.getToast('请填写视频名称');
     //   return;
@@ -275,6 +300,10 @@ Page({
     })
   },
   submitForm(e){
+    if(this.data.beer_type[this.data.beer_index].name == '请选择'){
+      publicFun.getToast('请选择啤酒类型');
+      return;
+    }
     if(this.data.date == ''){
       publicFun.getToast('请选择促销券有效时间');
       return;
@@ -282,6 +311,21 @@ Page({
     if(this.data.video_list[0].weseeLink == '' && this.data.video_list[1].weseeLink == '' && this.data.video_list[2].weseeLink == ''){
       publicFun.getToast('请至少上传一个视频链接');
       return;
+    }
+    for(let i in this.data.video_list){
+      if(this.data.video_list[i].weseeLink.indexOf('challenge') != '-1'){
+        // 微视挑战类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[0].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
+
+      if(this.data.video_list[i].weseeLink.indexOf('isee.weishi') != '-1'){
+        // 微视isee类型视频转换
+        let cs_id = this.data.video_list[i].weseeLink.split('&')[1].split('=')[1];
+        let all_cs = this.data.video_list[i].weseeLink.split('?')[1];
+        this.data.video_list[i].weseeLink = 'https://h5.weishi.qq.com/weishi/feed/'+ cs_id + '/wsfeed?' + all_cs
+      }
     }
     // if(this.data.video_list[0].videoName == '' && this.data.video_list[1].videoName == '' && this.data.video_list[2].videoName == ''){
     //   publicFun.getToast('请填写视频名称');

@@ -41,8 +41,8 @@ import {
 } from '../../api/user.js'
 import { base64src } from '../../utils/base64src.js'
 import publicFun from '../../utils/public.js'
-var requestUrl = 'http://192.168.1.2:8082';
-// var requestUrl = "https://b.3p3.top"
+// var requestUrl = 'http://192.168.1.2:8082';
+var requestUrl = "https://b.3p3.top"
 Page({
 
   /**
@@ -80,10 +80,11 @@ Page({
     custom_isNull: true,  //自定义促销券是否为空
     is_edit_back: false,  //编辑促销券保存返回
     roleList: [],
-    roleIdentity: '',//当前用户的角色type
+    roleIdentity: '8',//当前用户的角色type
     beerList: [],//啤酒配送列表
 
     show_beer_num: false,//是否显示验证啤酒数量弹框
+    beer_num: '1'
   },
 
   /**
@@ -99,6 +100,9 @@ Page({
       if(shop_res.code == 200){
         if(shop_res.data!=null){
           wx.setStorageSync('shop_id', shop_res.data.idKey)
+          wx.setStorageSync('back_img', shop_res.data.shopImg)
+        }else{
+          wx.removeStorageSync('back_img')
         }
       }
     })
@@ -110,6 +114,17 @@ Page({
       if(shop_res.code == 200){
         if(shop_res.data!=null){
           wx.setStorageSync('shop_id', shop_res.data.shopId)
+          getBeerShop({
+            idKey: shop_res.data.shopId
+          }).then((sp_res)=>{
+            if(sp_res.code == 200){
+              if(sp_res.data!=null){
+                wx.setStorageSync('back_img', sp_res.data.shopImg)
+              }else{
+                wx.removeStorageSync('back_img')
+              }
+            }
+          })
         }
       }
     })
@@ -149,39 +164,38 @@ Page({
         }).then((role_res)=>{
           if(role_res.code == 200){
             if(role_res.data != null){
-              if(role_res.data.type == 0 || role_res.data.type == 1){
-                role_list = ["县城老板","代理人","服务员","消费者"];
-              }else if(role_res.data.type == 2){
-                role_list = ["啤酒老板","送酒员","消费者"];
-                that.getBossShopRole();
-              }else if(role_res.data.type == 3){
-                role_list = ["餐馆老板","店员","消费者"]
-                that.getBossShopRole();
-              }
-              
-              if(role_res.data.type == 0 || role_res.data.type == 1 || role_res.data.type == 2 || role_res.data.type == 3){
-                changeUserType({
-                  type: role_res.data.type
-                }).then((res)=>{
-                  if(res.code == 200){
-
-                  }
+              if(role_res.data.status == 1){
+                if(role_res.data.type == 0 || role_res.data.type == 1){
+                  role_list = ["县城老板","代理人","消费者"];//"服务员",
+                }else if(role_res.data.type == 2){
+                  role_list = ["啤酒老板","配送员","消费者"];
+                  that.getBossShopRole();
+                }else if(role_res.data.type == 3){
+                  role_list = ["餐馆老板","店员","消费者"]
+                  that.getBossShopRole();
+                }
+                
+                if(role_res.data.type == 0 || role_res.data.type == 1 || role_res.data.type == 2 || role_res.data.type == 3){
+                  changeUserType({
+                    type: role_res.data.type
+                  }).then((res)=>{
+                    if(res.code == 200){
+  
+                    }
+                  })
+                }
+  
+                wx.setStorageSync('business_id', role_res.data.businessId);
+                wx.setStorageSync('role_identity', role_res.data.type);
+                that.setData({
+                  roleIdentity: role_res.data.type,
+                  roleList: role_list
                 })
               }
-
-              wx.setStorageSync('business_id', role_res.data.businessId);
-              wx.setStorageSync('role_identity', role_res.data.type);
-              that.setData({
-                roleIdentity: role_res.data.type,
-                roleList: role_list
-              })
             }else{
-              wx.removeStorageSync('role_identity');
-              let role_list = ["消费者"]
+              wx.removeStorageSync('role_identity')
               that.setData({
-                roleIdentity: 8,
-                roleList: role_list,
-                back_img: 'https://b.3p3.top/upload/bg.png'
+                roleIdentity: 8
               })
             }
           }
@@ -203,29 +217,33 @@ Page({
               // {icon: '/assets/nav_icon9.png',title: '我的销售员'},
               {icon: '/assets/nav_icon6.png',title: '促销券发行'},
               // {icon: '/assets/nav_icon8.png',title: '我的代理人'},
-              {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
               // {icon: '/assets/nav_icon7.png',title: '促销券收益'},
               {icon: '/assets/search.svg',title: '角色申请列表'},
-              {icon: '/assets/search.svg',title: '店铺列表'}
+              {icon: '/assets/search.svg',title: '店铺申请列表'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
             ]
           }else if(identity == '2'){
             // 啤酒老板
             id_title = '啤酒老板';
             promotion_list = [
               {icon: '/assets/nav_icon1.png',title: '啤酒配送'},
-              {icon: '/assets/nav_icon1.png',title: '库存配置'},
+              {icon: '/assets/nav_icon1.png',title: '餐馆库存配置'},
+              {icon: '/assets/nav_icon1.png',title: '餐馆库存情况'},
               {icon: '/assets/search.svg',title: '角色申请列表'},
-              {icon: '/assets/search.svg',title: '我的店铺'}
+              {icon: '/assets/search.svg',title: '我的店铺'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
             ]
           }else if(identity == '3'){
             // 餐馆老板
             id_title = '餐馆老板';
             promotion_list = [
               // {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
-              {icon: '/assets/nav_icon1.png',title: '库存配置'},
-              {icon: '/assets/nav_icon1.png',title: '库存情况'},
+              // {icon: '/assets/nav_icon1.png',title: '库存配置'},
+              {icon: '/assets/nav_icon1.png',title: '啤酒配送列表'},
+              {icon: '/assets/nav_icon1.png',title: '库存列表'},
               {icon: '/assets/search.svg',title: '角色申请列表'},
-              {icon: '/assets/search.svg',title: '我的店铺'}
+              {icon: '/assets/search.svg',title: '我的店铺'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
             ]
           }else if(identity == '4'){
             // 代理人
@@ -233,7 +251,7 @@ Page({
             promotion_list = [
               {icon: '/assets/nav_icon1.png',title: '促销券收藏'},
               {icon: '/assets/nav_icon6.png',title: '促销券再发行'},
-              // {icon: '/assets/nav_icon3.png',title: '促销券回顾'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
               // {icon: '/assets/nav_icon7.png',title: '促销券收益'},
               // {icon: '/assets/search.svg',title: '搜索商家'}
             ]
@@ -247,10 +265,11 @@ Page({
               // {icon: '/assets/nav_icon7.png',title: '促销券折让'}
             ]
           }else if(identity == '6'){
-            // 送酒员
-            id_title = '送酒员';
+            // 配送员
+            id_title = '配送员';
             promotion_list = [
-              {icon: '/assets/nav_icon1.png',title: '啤酒配送'}
+              {icon: '/assets/nav_icon1.png',title: '啤酒配送'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
             ]
             that.getShopRole();
           }else if(identity == '7'){
@@ -258,11 +277,13 @@ Page({
             id_title = '店员';
             promotion_list = [
               {icon: '/assets/nav_icon4.png',title: '促销券销售'},
-              {icon: '/assets/nav_icon5.png',title: '促销券验证'}
+              {icon: '/assets/nav_icon5.png',title: '促销券验证'},
+              {icon: '/assets/nav_icon3.png',title: '数据统计报表'},
             ]
             that.getShopRole();
           }
         }else{
+          wx.removeStorageSync('back_img');
           id_title = '消费者';
           is_click = false;
           promotion_list = [
@@ -276,6 +297,7 @@ Page({
 
         // 背景图
         let back_img = '';
+        console.log("---背景图---"+wx.getStorageSync('back_img'))
         if(wx.getStorageSync('back_img')){
           back_img = wx.getStorageSync('back_img')
           that.setData({
@@ -284,6 +306,7 @@ Page({
         }else{
           that.getBusinessBackImg();
         }
+        // that.getBusinessBackImg();
         that.setData({
           avatar: userinfo.headPortraitLink,
           name: userinfo.nickname,
@@ -353,6 +376,10 @@ Page({
     if(wx.getStorageSync('login_update')){
       this.getShowInit();
       wx.removeStorageSync('login_update');
+    }
+
+    if(wx.getStorageSync('is_addDelivery')){
+      this.updateToken();
     }
     // var that = this;
     // console.log(that.data.is_edit_back)
@@ -632,6 +659,7 @@ Page({
   },
   getIssuedList1(status){
     // 查看已发行的促销券列表(代理人)
+    console.log("---businesId---"+wx.getStorageSync('business_id'))
     let data = {
       status: status,//1:当前  0:回顾
       pageNum: this.data.page,
@@ -753,19 +781,13 @@ Page({
         //   })
         // }
         if(e.detail.index == 2){
-          // 促销券回顾
-          wx.navigateTo({
-            url: '/pages/profitList/index?type=boss',
-          })
-        }
-        if(e.detail.index == 3){
           // 角色申请列表
           wx.navigateTo({
             url: '/pages/roleApplyList/index'
           })
         }
-        if(e.detail.index == 4){
-          // 店铺列表
+        if(e.detail.index == 3){
+          // 店铺申请列表
           wx.navigateTo({
             url: '/pages/shopList/index'
           })
@@ -779,6 +801,15 @@ Page({
           //   pageSize: 5
           // }).then(res=>{
 
+          // })
+        }
+        if(e.detail.index == 4){
+          // 数据统计报表
+          wx.navigateTo({
+            url: '/pages/Browse/index'
+          })
+          // wx.navigateTo({
+          //   url: '/pages/profitList/index?type=boss',
           // })
         }
         if(e.detail.index == 6){
@@ -813,10 +844,13 @@ Page({
           this.getIssuedList1(1);
         }
         if(e.detail.index == 2){
-          // 促销券回顾
+          // 数据统计报表
           wx.navigateTo({
-            url: '/pages/profitDetail/index?type=agent&bossId='+this.data.select_bossId
+            url: '/pages/Browse/index'
           })
+          // wx.navigateTo({
+          //   url: '/pages/profitDetail/index?type=agent&bossId='+this.data.select_bossId
+          // })
         }
         if(e.detail.index == 3){
           // 促销券收益
@@ -867,9 +901,10 @@ Page({
         }
         if(e.detail.index == 1){
           // 验证
-          this.setData({
-            show_beer_num: true
-          })
+          // this.setData({
+          //   show_beer_num: true
+          // })
+          this.vertifyCoupon();
         }
         if(e.detail.index == 2){
           // 收入详情
@@ -904,18 +939,31 @@ Page({
             url: '/pages/beerBuild/index'
           })
         }else if(e.detail.index == 2){
+          // 库存情况
+          wx.navigateTo({
+            url: '/pages/stockList/index?from_type=1'
+          })
+        }else if(e.detail.index == 3){
           // 角色申请列表
           wx.navigateTo({
             url: '/pages/roleApplyList/index?type=shop'
           })
-        }else if(e.detail.index == 3){
+        }else if(e.detail.index == 4){
           // 我的店铺
           wx.navigateTo({
             url: '/pages/applyShop/index?is_edit=1'
           })
+        }else if(e.detail.index == 5){
+          // 数据统计报表
+          wx.navigateTo({
+            url: '/pages/Browse/index'
+          })
+          // wx.navigateTo({
+          //   url: '/pages/profitList/index?type=boss'
+          // })
         }
       }else if(this.data.identity == 6){
-        // 送酒员
+        // 配送员
         if(e.detail.index == 0){
           if(this.data.beerList.length != 0){
             // 啤酒配送列表
@@ -929,15 +977,21 @@ Page({
             })
           }
         }
+        if(e.detail.index == 1){
+          // 店铺库存情况
+          wx.navigateTo({
+            url: '/pages/Browse/index'
+          })
+        }
       }else if(this.data.identity == 3){
         // 餐馆老板
         if(e.detail.index == 0){
-          // 库存标准配置
+          // 啤酒配送列表
           wx.navigateTo({
-            url: '/pages/beerBuild/index'
+            url: '/pages/beliveryList/index'
           })
         }else if(e.detail.index == 1){
-          // 库存情况
+          // 库存列表
           wx.navigateTo({
             url: '/pages/stockList/index'
           })
@@ -951,6 +1005,14 @@ Page({
           wx.navigateTo({
             url: '/pages/applyShop/index?is_edit=1'
           })
+        }else if(e.detail.index == 4){
+          // 数据统计报表
+          wx.navigateTo({
+            url: '/pages/Browse/index'
+          })
+          // wx.navigateTo({
+          //   url: '/pages/profitList/index?type=boss',
+          // })
         }
       }else if(this.data.identity == 7){
         // 店员
@@ -989,10 +1051,16 @@ Page({
         }
         if(e.detail.index == 1){
           // 验证
-          this.setData({
-            show_beer_num: true
+          // this.setData({
+          //   show_beer_num: true
+          // })
+          this.vertifyCoupon();
+        }
+        if(e.detail.index == 2){
+          // 数据统计报表
+          wx.navigateTo({
+            url: '/pages/Browse/index'
           })
-          this.vetifyCoupon();
         }
       }
     }else{
@@ -1080,7 +1148,12 @@ Page({
       }
     }
   },
-  vetifyCoupon(){
+  changeBeerNum(e){
+    this.setData({
+      beer_num: e.detail.value
+    })
+  },
+  vertifyCoupon(){
     var that = this;
     wx.scanCode({
       success (res) {
@@ -1088,14 +1161,24 @@ Page({
         let data = res.result.replace("https://b.3p3.top?data=","");
         console.log('---扫码返回的参数2---'+data);
         verifySellCoupon({
-          data: data
+          data: data,
+          beerNumber: that.data.beer_num
         }).then((resg)=>{
           if(resg.code == 200){
+            // that.setData({
+            //   show_beer_num: false,
+            //   beer_num: 1
+            // })
             wx.showModal({
               title: "提示",
               content: "验证成功！",
               showCancel: false
             })
+          }else{
+            // that.setData({
+            //   show_beer_num: false,
+            //   beer_num: 1
+            // })
           }
         })
       }
@@ -1109,11 +1192,10 @@ Page({
     refreshUserInfo().then((res)=>{
       if(res.code == 200){
         wx.setStorageSync('token', res.data.token);
-
+        wx.removeStorageSync('is_addDelivery')
         getInfo().then(login_res=>{
           if(login_res.code == 200){
             wx.setStorageSync('userInfo', login_res.data);
-            
           }
         })
         // var id_title = '';
@@ -1218,7 +1300,7 @@ Page({
       }
       if(this.data.index == 1){
         wx.navigateTo({
-          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&id='+this.data.issued_list[index].coupon_id
+          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&id='+this.data.issued_list[index].idKey
         })
       }
     }else if(this.data.identity == 4){
@@ -1230,7 +1312,7 @@ Page({
       }
       if(this.data.index == 1){
         wx.navigateTo({
-          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&id='+this.data.issued_list[index].coupon_id
+          url: '/pages/couponDetail/index?src='+this.data.issued_list[index].src+'&id='+this.data.issued_list[index].idKey
         })
       }
     }
@@ -1459,7 +1541,7 @@ Page({
         id_title = '啤酒老板';
       }else if(index == 1){
         id_type = '6';
-        id_title = '送酒员';
+        id_title = '配送员';
       }else if(index == 2){
         id_type = '8';
         id_title = '消费者';

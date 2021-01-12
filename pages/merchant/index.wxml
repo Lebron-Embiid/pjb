@@ -55,6 +55,10 @@
       <view class="form_content"><input type="idcard" placeholder="请输入身份证号码" value="{{card}}" bindinput="getCard"></input></view>
     </view>
     <view class="form_item">
+      <text class="form_txt">县城区域 <text>*</text></text>
+      <view class="form_content"><input placeholder="请选择县城区域（区）" disabled value="{{address}}" bindtap="toSearchAddress"></input></view>
+    </view>
+    <view class="form_item">
       <text class="form_txt">身份证照</text>
       <view class="form_content noborder">
         <view class="add_box" bindtap="chooseCardImage">

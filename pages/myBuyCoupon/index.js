@@ -10,7 +10,7 @@ Page({
   data: {
     type: 0,//0:可使用 1:无使用次数 2:过期 3:被删除
     page: 1,
-    nav_list: ['可使用','已删除'],//'已用完','已过期',
+    nav_list: ['可使用','已用完'],//'已用完','已过期',
     nav_active: 0,
     type_index: 1,
     myBuyCouponList: []
@@ -62,7 +62,11 @@ Page({
     let data = {
       pageNum: this.data.page,
       pageSize: 20,
-      type: type
+      // type: type,
+      consumerId: wx.getStorageSync('userInfo').unionId
+    }
+    if(this.data.nav_active == 1){
+      data.count = 0
     }
     querySellSuccessCouponInfoList(data).then((res)=>{
       if(res.code == 200){

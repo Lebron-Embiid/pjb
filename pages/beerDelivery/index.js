@@ -4,7 +4,8 @@ import {
   publishBeerDelivery,
   updateByIdBeerDelivery,
   getShopRoleInfoList,
-  getBeerShopList
+  getBeerShopList,
+  getUserRoleInfoList
 } from '../../api/user.js'
 import publicFun from '../../utils/public.js'
 Page({
@@ -13,12 +14,15 @@ Page({
    * 页面的初始数据
    */
   data: {
-    beer_type: [{idKey: '-1',name: '通用'}],
+    beer_type: [{idKey: '-1',name: '请选择'}],
     beer_index: 0,
     shop_list: [{shopName: '请选择店铺'}],
     shop_index: 0,
     number: '',
+    userInfo: {},
     shopInfo: {},
+    delivery_shop_id: '',//配送店铺id
+    delivery_user_id: '',//配送人id
     take_shop_id: '',//收货店铺id
     take_user_id: '',//收货人id
     is_from: '',
@@ -29,10 +33,19 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.setData({
+      userInfo: wx.getStorageSync('userInfo')
+    })
+    // 获取啤酒类型
     getBeerTypeList({
       businessId: wx.getStorageSync('business_id')
     }).then((res)=>{
       if(res.code == 200){
+        if(res.data.length!=0){
+          this.setData({
+            beer_type: []
+          })
+        }
         for(let i in res.data){
           this.data.beer_type.push({
             idKey: res.data[i].idKey,
@@ -44,8 +57,42 @@ Page({
         })
       }
     })
+    
+    // 获取店铺列表和店铺信息
+    getBeerShopList({
+      businessId: wx.getStorageSync('business_id'),
+      type: 1
+    }).then((res)=>{
+      if(res.code == 200){
+        if(res.data.length != 0){
+          let item = res.data;
+          for(let i in item){
+            item[i].phone = item[i].phone.substr(0,3)+"****"+item[i].phone.substr(7);
+          }
+          this.setData({
+            shop_list: item,
+            shopInfo: item[0],
+            take_shop_id: item[0].idKey,
+            take_user_id: item[0].userId
+          })
+        }
+      }
+    })
 
+    // 获取配送人（自己）店铺id 和 用户id
+    getShopRoleInfoList({
+      userId: wx.getStorageSync('userInfo').unionId
+    }).then((res)=>{
+      if(res.code == 200){
+        this.setData({
+          delivery_shop_id: res.data[0].shopId,
+          delivery_user_id: wx.getStorageSync('userInfo').unionId
+        })
+      }
+    })
+    
     if(options.is_from == 'edit'){
+      // 修改进来
       getBeerShopList({
         businessId: wx.getStorageSync('business_id'),
         type: 1
@@ -62,9 +109,10 @@ Page({
             let shopinfo = {};
             let beer_index = 0;
             for(let i in item){
-              if(item[i].shopId == data.deliveryShopId){
+              if(item[i].idKey == data.takeShopId){
                 select_shop_index = i;
                 shopinfo.nickname = item[i].nickname;
+                shopinfo.bossName = item[i].bossName;
                 shopinfo.phone = item[i].phone;
               }
             }
@@ -87,38 +135,6 @@ Page({
           }
         }
       })
-    }else{
-      getBeerShopList({
-        businessId: wx.getStorageSync('business_id'),
-        type: 1
-      }).then((res)=>{
-        if(res.code == 200){
-          if(res.data.length != 0){
-            let item = res.data;
-            for(let i in item){
-              item[i].phone = item[i].phone.substr(0,3)+"****"+item[i].phone.substr(7);
-            }
-            this.setData({
-              shop_list: item,
-              shopInfo: item[0]
-            })
-          }
-        }
-      })
-  
-      getBeerShopList({
-        businessId: wx.getStorageSync('business_id'),
-        type: 1
-      }).then((res)=>{
-        if(res.code == 200){
-          if(res.data.length != 0){
-            this.setData({
-              take_shop_id: res.data[0].shopId,
-              take_user_id: res.data[0].userId
-            })
-          }
-        }
-      })
     }
   },
   bindSelectorChange(e){
@@ -127,15 +143,24 @@ Page({
     })
   },
   bindShopChange(e){
-    getShopRoleInfoList({
-      shopId: this.data.shop_list[e.detail.value].shopId,
-      shopType: 1
+    console.log(JSON.stringify(this.data.shop_list))
+    this.setData({
+      shop_index: e.detail.value,
+      shopInfo: this.data.shop_list[e.detail.value],
+      take_shop_id: this.data.shop_list[e.detail.value].idKey,
+      take_user_id: this.data.shop_list[e.detail.value].userId
+    })
+    return;
+    getUserRoleInfoList({
+      userId: wx.getStorageSync('userInfo').unionId
     }).then((res)=>{
       if(res.code == 200){
-        this.setData({
-          take_shop_id: res.data[0].shopId,
-          take_user_id: res.data[0].userId
-        })
+        if(res.data!=null){
+          this.setData({
+            take_shop_id: res.data[e.detail.value].idKey,
+            take_user_id: res.data[e.detail.value].userId
+          })
+        }
       }
     })
     this.setData({
@@ -154,6 +179,10 @@ Page({
     })
   },
   addSubmit(){
+    if(this.data.beer_type[this.data.beer_index].name == '请选择'){
+      publicFun.getToast('请选择啤酒类型');
+      return;
+    }
     if(this.data.number == ''){
       publicFun.getToast("请输入配送的啤酒数量");
       return;
@@ -165,8 +194,8 @@ Page({
     let data = {
       beerTypeId: this.data.beer_type[this.data.beer_index].idKey,
       beerCount: this.data.number,
-      deliveryShopId: this.data.shop_list[this.data.shop_index].shopId,
-      deliveryUserId: this.data.shop_list[this.data.shop_index].userId,
+      deliveryShopId: this.data.delivery_shop_id,
+      deliveryUserId: this.data.delivery_user_id,
       takeShopId: this.data.take_shop_id,
       takeUserId: this.data.take_user_id,
       businessId: wx.getStorageSync('business_id'),
@@ -187,6 +216,7 @@ Page({
         if(res.code == 200){
           publicFun.getToast("添加成功");
           setTimeout(()=>{
+            wx.setStorageSync('is_addDelivery', 1)
             wx.navigateBack()
           },1500)
         }

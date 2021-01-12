@@ -1,0 +1,38 @@
+<!--pages/map/index.wxml-->
+<!-- <view class="section">
+  <input disabled bindtap="bindInput" placeholder="搜索" value='{{AddressName}}'/>
+</view> -->
+<!-- <view bindtouchstart="bindSearch" data-keywords="{{i.name}}" data-location="{{i.location}}" class="text_box" wx:for="{{tips}}" wx:for-item="i">
+  {{i.name}}
+</view> -->
+<!-- <view wx:if="{{AddressName==''}}">
+</view>
+<view wx:if="{{AddressName!=''}}">
+  <text>位置：{{AddressName}}\n经纬度坐标:{{AddressLocation}}</text>
+</view> -->
+
+<view class="{{isFirstFrom!=true?'map_container more':'map_container'}}">
+  <map class="map" 
+    id="map" 
+    polygons="{{polygon}}" 
+    longitude="{{longitude}}" 
+    latitude="{{latitude}}" 
+    scale="14" 
+    show-location="true" 
+    markers="{{markers}}" 
+    bindmarkertap="makertap">
+  </map>
+</view>
+<block wx:if="{{isFirstFrom!=true}}">
+  <view class="map_text">
+    <view class="map_left">
+      <view><text>店铺名称：{{textData.shopName}}</text></view>
+      <view><text>老板名称：{{textData.bossName}}</text></view>
+      <view><text>店铺库存：{{textData.beerSurplus}}</text> <!-- <text>联系方式：{{textData.phone}}</text> --></view>
+      <view><text>地址：{{textData.address}}</text></view>
+    </view>
+    <!-- <view class="map_right">
+      <button type="primary" size="mini" bindtap="toHere">去这里</button>
+    </view> -->
+  </view>
+</block>
