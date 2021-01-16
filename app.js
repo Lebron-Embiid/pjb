@@ -1,13 +1,10 @@
 //app.js
-import mqtt from './utils/mqtt.min.js';
-let client = null;
 App({
   globalData: {
     userInfo: null,
     is_login: 0
   },
   onLaunch: function() {
-    // this.connectMqtt();
     var that = this;
     wx.checkSession({
       success () {
@@ -66,38 +63,5 @@ App({
       return r[2];
     }
     return null;
-  },
-  connectMqtt: function() {
-    var clinet_id = parseInt(Math.random() * 100 + 888888888, 10);
-    console.log('wx_' + clinet_id);
-    const options = {
-      connectTimeout: 4000, // 超时时间
-      clientId: 'wx_' + clinet_id,
-      port: 8083,  
-      username: 'xxxx',
-      password: 'xxxxx',
-    }
-    client = mqtt.connect('wx://xxxxxx', options)
-    client.on('reconnect', (error) => {
-      console.log('正在重连:', error)
-    })
-    client.on('error', (error) => {
-      console.log('连接失败:', error)
-    })
-    let that = this;
-    client.on('connect', (e) => {
-      console.log('成功连接服务器')
-　　　 //订阅一个主题
-      client.subscribe('message.queue', {
-        qos: 0
-      }, function(err) {
-        if (!err) {
-          console.log("订阅成功")
-        }
-      })
-    })
-    client.on('message', function (topic, message) {
-      console.log('received msg:' + message.toString());
-    })
-  },
+  }
 })

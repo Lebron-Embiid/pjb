@@ -48,12 +48,26 @@
 }
 
 .section{
-  height: 45px;
-  width: 100%;
-  padding: 0 30rpx;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20rpx;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
+  color: #333333;
+  font-size: 24rpx;
+  background: #ffffff;
+}
+.map_shadow{
+  position: fixed;
+  right: 20rpx;
+  top: 20rpx;
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 20rpx;
+}
+.map_shadow cover-image{
+  width: 50rpx;
+  height: 50rpx;
 }
 .section input{
   width:100%;

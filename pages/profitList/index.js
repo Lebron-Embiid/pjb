@@ -11,7 +11,8 @@ import {
   querySellCouponDealRecordStatisticsOutlineIsDay,
   querySellCouponDealRecordStatisticsOutlineIsHour,
   querySellCouponDealRecordStatisticsOutlineIsMonth,
-  queryAgentInviteRatioList
+  queryAgentInviteRatioList,
+  getBeerTypeList
 } from '../../api/user.js'
 
 var Chart = null;
@@ -33,7 +34,10 @@ Page({
     },
     selectDayMonth: 1,//0:小时 1:天 2:月
     lastArr: [],
-    lastMonth: []
+    lastMonth: [],
+    couponTypes: [],
+    coupon_index: null,
+    coupon_type: '',//是否是 查看促销券类型销量：couponType
   },
 
   /**
@@ -58,7 +62,37 @@ Page({
       date: today,
       lastArr: last7
     })
-    
+
+    if(options.coupon_type){
+      this.setData({
+        coupon_type: options.coupon_type
+      })
+    }
+
+    if(this.data.type == 0 || this.data.type == 1){
+      // 获取啤酒类型
+      getBeerTypeList({
+        businessId: wx.getStorageSync('business_id')
+      }).then((res)=>{
+        if(res.code == 200){
+          if(res.data.length!=0){
+            this.setData({
+              couponTypes: []
+            })
+          }
+          for(let i in res.data){
+            this.data.couponTypes.push({
+              idKey: res.data[i].idKey,
+              name: res.data[i].name
+            })
+          }
+          this.setData({
+            couponTypes: this.data.couponTypes
+          })
+        }
+      })
+    }
+
     this.echartsComponnet = this.selectComponent('#mychart');
     this.getData(today); //获取数据
 
@@ -103,7 +137,7 @@ Page({
 
   },
   getData(today){
-    if(this.data.type == 0 || this.data.type == 1 || this.data.type == 4){
+    if(this.data.coupon_type != 'couponType' && (this.data.type == 0 || this.data.type == 1 || this.data.type == 4)){
       // 代理人报表
       if(this.data.selectDayMonth == 1){
         // 天
@@ -266,6 +300,13 @@ Page({
         if(this.data.type == 3 || this.data.type == 7){
           data.sellerId = wx.getStorageSync('userInfo').unionId
         }
+        
+        if(this.data.coupon_type == 'couponType'){
+          data.businessId = wx.getStorageSync('business_id')
+          if(this.data.coupon_index != null){
+            data.beerTypeId = this.data.couponTypes[this.data.coupon_index].idKey
+          }
+        }
         querySellCouponDealRecordStatisticsOutlineIsDay(data).then((res)=>{
           if(res.code == 200){
             let x_data = [];
@@ -307,6 +348,12 @@ Page({
         if(this.data.type == 3 || this.data.type == 7){
           data.sellerId = wx.getStorageSync('userInfo').unionId
         }
+        if(this.data.coupon_type == 'couponType'){
+          data.businessId = wx.getStorageSync('business_id')
+          if(this.data.coupon_index != null){
+            data.beerTypeId = this.data.couponTypes[this.data.coupon_index].idKey
+          }
+        }
         querySellCouponDealRecordStatisticsOutlineIsMonth(data).then((res)=>{
           if(res.code == 200){
             let x_data = [];
@@ -345,6 +392,12 @@ Page({
         }
         if(this.data.type == 3 || this.data.type == 7){
           data.sellerId = wx.getStorageSync('userInfo').unionId
+        }
+        if(this.data.coupon_type == 'couponType'){
+          data.businessId = wx.getStorageSync('business_id')
+          if(this.data.coupon_index != null){
+            data.beerTypeId = this.data.couponTypes[this.data.coupon_index].idKey
+          }
         }
         querySellCouponDealRecordStatisticsOutlineIsHour(data).then((res)=>{
           if(res.code == 200){
@@ -407,6 +460,9 @@ Page({
     }else{
       title_txt = '销售员交易记录报表';
       legend_arr = ['销售数量'];
+    }
+    if(this.data.coupon_type == 'couponType'){
+      title_txt = '促销券类型销量报表';
     }
     var option = {
       title: {
@@ -544,6 +600,14 @@ Page({
     }else{
       this.getSellerProfitList();
     }
+  },
+  bindTypeChange(e){
+    this.setData({
+      coupon_index: e.detail.value,
+      lastMonth: [],
+      dataList: []
+    })
+    this.getData(); //获取数据
   },
   bindDateChange(e){
     this.setData({

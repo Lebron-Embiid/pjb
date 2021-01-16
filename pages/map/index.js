@@ -23,6 +23,8 @@ Page({
     AddressName: '',
     AddressLocation: '',
 
+    shop_types: ['火锅店','烧烤店','中餐店','地方小吃','美食广场','酒店餐饮','其他'],
+    shop_index: null,
     // polygon: [{
     //   points:[
     //     {"latitude":22.534134,"longitude":113.921632},
@@ -57,6 +59,12 @@ Page({
       }
      })
     this.setAuthMap();
+  },
+  bindPickerChange(e){
+    this.setData({
+      shop_index: e.detail.value
+    })
+    this.showMap();
   },
   toHere(){
     var that = this;
@@ -183,20 +191,28 @@ Page({
         if(identity==2||identity==6){
           data.factoryShopId = wx.getStorageSync('shop_id')
         }
+        if(that.data.shop_index != null){
+          data.shopTypeName = that.data.shop_types[that.data.shop_index]
+        }
+
         viewShopStockCaseList(data).then((shop_res)=>{
           if(shop_res.code == 200){
             markersData = shop_res.data;
             if(markersData.length > 0){
               // var poisData = res_data.poisData;
               var markers_new = [];
-              let iconPath = '../../assets/marker2.png';
+              let iconPath = '../../assets/map/7_red7.png';
               let beerSurplus = 0;
               for(let i=0;i<markersData.length;i++){
                 let item = markersData[i];
                 console.log("---当前item---"+JSON.stringify(item))
                 if(item.secureStockList.length != 0){
                   // 安全（绿）库存列表
-                  iconPath = '../../assets/marker3.png';
+                  for(let i=1;i<=that.data.shop_types.length;i++){
+                    if(item.shopTypeName == that.data.shop_types[i-1]){
+                      iconPath = '../../assets/map/'+i+'_green'+i+'.png'
+                    }
+                  }
                   let max = item.secureStockList[0].beerSurplus;
                   for(let j=0;j<item.secureStockList.length;j++){
                     var cur = item.secureStockList[j];
@@ -206,7 +222,11 @@ Page({
                 }
                 if(item.warnStockList.length != 0){
                   // 警告（黄）库存列表
-                  iconPath = '../../assets/marker4.png';
+                  for(let i=1;i<=that.data.shop_types.length;i++){
+                    if(item.shopTypeName == that.data.shop_types[i-1]){
+                      iconPath = '../../assets/map/'+i+'_yellow'+i+'.png'
+                    }
+                  }
                   let max = item.warnStockList[0].beerSurplus;
                   for(let j=0;j<item.warnStockList.length;j++){
                     var cur = item.warnStockList[j];
@@ -216,7 +236,11 @@ Page({
                 }
                 if(item.dangerStockList.length != 0){
                   // 危险（红）库存列表
-                  iconPath = '../../assets/marker2.png';
+                  for(let i=1;i<=that.data.shop_types.length;i++){
+                    if(item.shopTypeName == that.data.shop_types[i-1]){
+                      iconPath = '../../assets/map/'+i+'_red'+i+'.png'
+                    }
+                  }
                   let max = item.dangerStockList[0].beerSurplus;
                   for(let j=0;j<item.dangerStockList.length;j++){
                     var cur = item.dangerStockList[j];
@@ -226,7 +250,11 @@ Page({
                 }
                 if(item.secureStockList.length==0&&item.warnStockList.length==0&&item.dangerStockList.length==0){
                   // 库存为0的情况
-                  iconPath = '../../assets/marker2.png';
+                  for(let i=1;i<=that.data.shop_types.length;i++){
+                    if(item.shopTypeName == that.data.shop_types[i-1]){
+                      iconPath = '../../assets/map/'+i+'_red'+i+'.png'
+                    }
+                  }
                   beerSurplus = 0;
                 }
                 markers_new.push({

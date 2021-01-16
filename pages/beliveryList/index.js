@@ -133,12 +133,13 @@ Page({
       }).then((res)=>{
         if(res.code == 200){
           let base64 = "data:image/png;base64," + res.data;
-          base64src(base64,id,image=>{
-            this.setData({
-              user_code: image,
-              is_showCode: true
-            })
-          })
+		  this.setData({
+		    user_code: base64,
+		    is_showCode: true
+		  })
+          // base64src(base64,id,image=>{
+            
+          // })
         }
       })
     }else{

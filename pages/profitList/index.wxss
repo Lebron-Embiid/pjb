@@ -55,3 +55,13 @@ ec-canvas{
   color: #ff0000;
   border-bottom: 5rpx solid #ff0000;
 }
+
+.profit_date{
+  display: block;
+  width: 50%;
+  text-align: center;
+  padding: 10rpx 20rpx;
+  box-sizing: border-box;
+  border: 1px solid #cccccc;
+  margin: 0 auto 30rpx;
+}

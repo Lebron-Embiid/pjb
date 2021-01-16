@@ -1,7 +1,13 @@
 <!--pages/map/index.wxml-->
-<!-- <view class="section">
-  <input disabled bindtap="bindInput" placeholder="搜索" value='{{AddressName}}'/>
-</view> -->
+<!-- <cover-view class="section" wx:if="{{shop_index!=null}}">
+  当前店铺类型：{{shop_types[shop_index]}}
+</cover-view>
+<picker mode="selector" range="{{shop_types}}" bindchange="bindPickerChange">
+  <cover-view class="map_shadow">
+    <cover-image src="../../assets/map_icon2.png"></cover-image>
+  </cover-view>
+</picker> -->
+
 <!-- <view bindtouchstart="bindSearch" data-keywords="{{i.name}}" data-location="{{i.location}}" class="text_box" wx:for="{{tips}}" wx:for-item="i">
   {{i.name}}
 </view> -->

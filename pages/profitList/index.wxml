@@ -1,6 +1,13 @@
 <!--pages/profitList/index.wxml-->
 <view>
   <view class="profit_box">
+    <view class="profit_date" wx:if="{{coupon_type=='couponType'&&(type==0 || type==1)}}">
+      <picker mode="selector" range="{{couponTypes}}" range-key="name" bindchange="bindTypeChange">
+        <view class="picker">
+          {{coupon_index?couponTypes[coupon_index].name:'请选择类型'}}
+        </view>
+      </picker>
+    </view>
     <!-- <view class="profit_date">
       <picker mode="date" value="{{date}}" bindchange="bindDateChange">
         <view class="picker">

@@ -115,14 +115,11 @@ Page({
   getQrCode(){
     showUserQRCode().then(res=>{
       if(res.code == 200){
-        const base64ImgUrl = "data:image/png;base64," + res.data;
-        base64src(base64ImgUrl,1,ress=>{
-          this.data.user_code = ress;
-          this.setData({
-            user_code: this.data.user_code
-          })
-        })
-      }
+			let base64ImgUrl = "data:image/png;base64," + res.data;
+			this.setData({
+				user_code: this.data.base64ImgUrl
+			})
+		}
     })
   },
 

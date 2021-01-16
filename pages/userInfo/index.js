@@ -218,36 +218,6 @@ Page({
       }
     })
   },
-  getCollectList() {
-    //收藏列表
-    queryCouponCollectList({
-      pageNum: this.data.page2,
-      pageSize: 3
-    }).then(res=>{
-      if(res.code == 200){
-        for(let i in res.data.records){
-          let item = res.data.records[i];
-          let base64 = "data:image/png;base64," + item.rqcode;
-          let random = '';
-          for (var i = 0; i < 8; i++) {
-            random += Math.floor(Math.random(i)*10);
-          }
-          base64src(base64,random,ress=>{
-            this.data.collect_list.push({
-              certId: item.certId,
-              id: item.couponId,
-              coupon: ress,
-              couponName: item.couponName
-            });
-            this.setData({
-              collect_list: this.data.collect_list,
-              pages: res.data.pages
-            })
-          })
-        }
-      }
-    })
-  },
   getBuyList(){
     querySellSuccessCouponImgList({
       consumerId: wx.getStorageSync('userInfo').unionId
@@ -395,13 +365,6 @@ Page({
       page1: this.data.page1
     })
     this.getLookList();
-  },
-  getCollectMore(){
-    this.data.page2++;
-    this.setData({
-      page2: this.data.page2
-    })
-    this.getCollectList();
   },
   getCouponMore(){
     this.data.page3++;

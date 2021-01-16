@@ -5,6 +5,7 @@
       <!-- 县城老板、代理人 -->
       <van-cell is-link title="代理人交易记录" data-url="/pages/profitList/index" bindtap="pageTo" />
       <van-cell is-link title="代理人交易记录平均值" data-url="/pages/profitAverageList/index" bindtap="pageTo" />
+      <van-cell is-link title="促销券类型销量报表" data-url="/pages/profitList/index?coupon_type=couponType" bindtap="pageTo" />
     </block>
     <block wx:if="{{identity==3||identity==7}}">
       <!-- 啤酒老板、餐馆老板、店员 -->

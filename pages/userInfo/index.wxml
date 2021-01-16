@@ -50,17 +50,6 @@
     </view>
     <view class="no_data_txt" wx:else>暂无数据</view>
   </view>
-  <!-- 收藏促销券 -->
-  <!-- <view class="nav_content" wx:if="{{nav_active == 1 && is_look_sell == false}}">
-    <view class="browse_box">
-      <scroll-view class="scroll_view_H" bindscrolltolower="getCollectMore" scroll-x="true" style="width: 100%">
-        <view class="scroll_item" bindlongpress="delCollectCoupon" bindtap="selectCollect" data-index="{{index}}" wx:for="{{collect_list}}" wx:key="index">
-          <view class="txt">{{item.couponName}}</view>
-          <image src="{{item.coupon}}" mode="widthFix"></image>
-        </view>
-      </scroll-view>
-    </view>
-  </view> -->
   <!-- 已购促销券 -->
   <view class="nav_content" wx:if="{{nav_active == 1}}">
     <view class="browse_box" wx:if="{{coupon_list.length!=0}}">
@@ -75,19 +64,19 @@
   </view>
   <!-- 已出售促销券 -->
   <block wx:if="{{is_look_sell == true}}">
-    <scroll-view bindscrolltolower="getSellerListMore1" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 0}}">
+    <!-- <scroll-view bindscrolltolower="getSellerListMore1" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 0}}">
       <view class="seller_coupon_item" wx:for="{{sellerList1}}" wx:key="index">
         <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
         <view class="seller_bottom"><text>{{item.nickname}}</text><text>促销编号：{{item.number}}</text></view>
       </view>
-    </scroll-view>
+    </scroll-view> -->
     <!-- 已验收促销券 -->
-    <scroll-view bindscrolltolower="getSellerListMore2" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 1}}">
+    <!-- <scroll-view bindscrolltolower="getSellerListMore2" scroll-y="true" style="height: 600rpx;" class="nav_content" wx:if="{{identity == 'seller' && nav_active == 1}}">
       <view class="seller_coupon_item" wx:for="{{sellerList2}}" wx:key="index">
         <view class="seller_top"><text>{{item.couponName}}</text><text>{{item.date}}</text></view>
         <view class="seller_bottom"><text></text><text>促销面值：{{item.value}}</text></view>
       </view>
-    </scroll-view>
+    </scroll-view> -->
   </block>
   <view class="{{is_showCode == true?'user_code_box show':'user_code_box'}}" bindtap="hideUserCode">
     <image src="{{user_code}}" mode="widthFix"></image>
